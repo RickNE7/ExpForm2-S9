@@ -3,535 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plan Estratégico: Quinua Orgánica USA</title>
+    <title>BI Dashboard | Andean Pure Grains</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Chosen Palette: Earthy Naturals (Cream, Sage Green, Deep Green, Soft Brown, Muted Orange for accents) -->
-    <!-- Application Structure Plan: The SPA uses a vertical scrolling dashboard layout with a sticky side navigation menu. This structure was chosen to guide the user linearly through the analytical process requested: from understanding the competitive landscape (Competitors & KPI) to mapping the user experience (Customer Journey), and finally validating the business viability (Financial KPIs). It allows for deep dives into specific sections while maintaining the overall context of the export plan. -->
-    <!-- Visualization & Content Choices: 
-         1. Competitor Analysis -> Goal: Compare -> Method: Interactive Table -> Interaction: Hover states and sortable columns (conceptualized via JS) -> Justification: Tables are best for comparing multi-variable discrete data (price, packaging, etc.).
-         2. Market Position (KPI) -> Goal: Relationships/Compare -> Method: Chart.js Bubble Chart -> Interaction: Tooltips with brand details -> Justification: Bubble charts perfectly map position based on Price vs Quality, with bubble size representing market presence.
-         3. Customer Journey -> Goal: Process/Change -> Method: HTML/Tailwind Interactive Timeline -> Interaction: Clickable stages to reveal pain points and emotions -> Justification: Avoids SVG/Mermaid while providing a highly engaging, step-by-step narrative.
-         4. Financial KPIs -> Goal: Inform/Compare -> Method: Metric Cards & Chart.js Bar Chart -> Interaction: Tooltips -> Justification: Cards give immediate bottom-line visibility, while the bar chart visually contrasts CLV vs CAC.
-         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            light: '#f4f1ea', // Cream background
-                            sage: '#a3b18a',  // Muted green
-                            primary: '#588157',// Deep green
-                            dark: '#344e41',   // Very dark green
-                            accent: '#da8a67'  // Muted terracotta/orange
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        serif: ['Merriweather', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f1ea;
-            color: #344e41;
-        }
-        
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
-        }
-        
-        @media (max-width: 768px) {
-            .chart-container {
-                height: 300px;
-                max-height: 350px;
-            }
-        }
-
-        .journey-step {
-            transition: all 0.3s ease;
-        }
-        .journey-step.active {
-            background-color: #588157;
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f4f1ea;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #a3b18a;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #588157;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; height: 350px; width: 100%; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #4f46e5; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(79, 70, 229, 0.3); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e2e8f0; border-radius: 3px; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .tab-active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
 
-    <aside class="w-64 bg-brand-dark text-white flex flex-col hidden md:flex">
-        <div class="p-6 border-b border-brand-primary">
-            <h1 class="text-2xl font-serif font-bold tracking-tight text-brand-light">Andean Pure Grains</h1>
-            <p class="text-xs text-brand-sage mt-2 uppercase tracking-wider">Plan USA 2026</p>
-        </div>
-        <nav class="flex-1 overflow-y-auto py-4">
-            <ul class="space-y-2 px-4">
-                <li><a href="#intro" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Inicio</a></li>
-                <li><a href="#competencia" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Análisis de Competencia</a></li>
-                <li><a href="#kpi-mercado" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Posicionamiento y KPI</a></li>
-                <li><a href="#viaje-cliente" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Viaje del Cliente</a></li>
-                <li><a href="#finanzas" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">KPIs Financieros</a></li>
-                <li><a href="#referencias" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Referencias (APA)</a></li>
-            </ul>
-        </nav>
-        <div class="p-4 bg-brand-primary text-xs text-brand-light text-center">
-            Reporte Ejecutivo Interactivo
-        </div>
-    </aside>
-
-    <main class="flex-1 overflow-y-auto bg-brand-light">
-        <header class="md:hidden bg-brand-dark text-white p-4 sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="text-xl font-serif font-bold">Andean Pure Grains</h1>
-            <button id="mobile-menu-btn" class="text-2xl">&#9776;</button>
-        </header>
-        
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-primary text-white p-4 space-y-2">
-            <a href="#intro" class="block py-2 border-b border-brand-sage">Inicio</a>
-            <a href="#competencia" class="block py-2 border-b border-brand-sage">Competencia</a>
-            <a href="#kpi-mercado" class="block py-2 border-b border-brand-sage">Posicionamiento KPI</a>
-            <a href="#viaje-cliente" class="block py-2 border-b border-brand-sage">Viaje del Cliente</a>
-            <a href="#finanzas" class="block py-2 border-b border-brand-sage">Finanzas</a>
-        </div>
-
-        <div class="max-w-6xl mx-auto p-6 md:p-10 space-y-16">
-
-            <section id="intro" class="pt-8">
-                <div class="bg-white rounded-2xl shadow-sm p-8 border-l-8 border-brand-accent">
-                    <h2 class="text-3xl md:text-5xl font-serif font-bold text-brand-dark mb-4">Plan Estratégico de Exportación a Los Ángeles, USA</h2>
-                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
-                        Este panel interactivo consolida el análisis de mercado para la introducción de Quinua Peruana Orgánica (Blanca y Tricolor). A continuación, se presenta un desglose de los competidores clave en retail digital (Amazon, Whole Foods), el cálculo del KPI de competitividad, el mapa de viaje del consumidor objetivo californiano y las proyecciones financieras críticas (ROI, CLV, CAC).
-                    </p>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div class="bg-brand-light p-4 rounded-lg">
-                            <span class="block text-2xl mb-1">&#x1F33E;</span>
-                            <span class="font-bold text-brand-dark">Producto</span>
-                            <span class="block text-sm text-gray-600">Quinua Orgánica</span>
-                        </div>
-                        <div class="bg-brand-light p-4 rounded-lg">
-                            <span class="block text-2xl mb-1">&#x1F30D;</span>
-                            <span class="font-bold text-brand-dark">Destino</span>
-                            <span class="block text-sm text-gray-600">Los Ángeles, CA</span>
-                        </div>
-                        <div class="bg-brand-light p-4 rounded-lg">
-                            <span class="block text-2xl mb-1">&#x1F4E6;</span>
-                            <span class="font-bold text-brand-dark">Partida</span>
-                            <span class="block text-sm text-gray-600">1008.50.90.00</span>
-                        </div>
-                        <div class="bg-brand-light p-4 rounded-lg">
-                            <span class="block text-2xl mb-1">&#x1F4C8;</span>
-                            <span class="font-bold text-brand-dark">Enfoque</span>
-                            <span class="block text-sm text-gray-600">B2C D2C e-commerce</span>
-                        </div>
-                    </div>
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">A</div>
+                    <span class="text-lg font-bold tracking-tight text-slate-800">Andean <span class="text-indigo-600">Pure Grains</span></span>
                 </div>
-            </section>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-500">
+                    <a href="#kpis" class="hover:text-indigo-600 transition">Métricas</a>
+                    <a href="#estrategia" class="hover:text-indigo-600 transition">Estrategia 9Ps</a>
+                    <a href="#benchmarking" class="hover:text-indigo-600 transition">Competencia</a>
+                    <a href="#growth" class="hover:text-indigo-600 transition font-semibold text-indigo-600">Simulador ROI</a>
+                </div>
+                <div class="text-xs font-mono text-slate-400">v2.0.26 | 2026-1</div>
+            </div>
+        </div>
+    </nav>
 
-            <section id="competencia" class="scroll-mt-20">
-                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">1. Análisis de Competencia Directa e Indirecta</h3>
-                <p class="text-gray-600 mb-6">Evaluación de 7 marcas líderes en el mercado estadounidense (Amazon, Tienda Mía, Whole Foods) basada en sus estrategias de empaque, presencia digital, precios por libra y propuesta de valor (características).</p>
-                
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-brand-dark text-white">
-                                <th class="p-4 font-semibold">Empresa / Marca</th>
-                                <th class="p-4 font-semibold">Empaque</th>
-                                <th class="p-4 font-semibold">Página Web / Canal</th>
-                                <th class="p-4 font-semibold">Precio Prom. (USD/lb)</th>
-                                <th class="p-4 font-semibold">Características Destacadas</th>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Executive Performance Dashboard</h1>
+                <p class="text-slate-500 mt-1">Exportación de Quinua Orgánica a EE.UU. (Los Ángeles)</p>
+            </div>
+            <div class="flex gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                    <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse"></span> Mercado: Activo
+                </span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                    Sustentación Final
+                </span>
+            </div>
+        </header>
+
+        <!-- Section 1: Main KPIs -->
+        <section id="kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- ROI -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ROI de Inversión CX</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-bold text-slate-800">100%</span>
+                    <span class="text-xs font-semibold text-emerald-600">▲ +12.4%</span>
+                </div>
+                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
+                    <div class="bg-emerald-500 h-full w-full"></div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-2 italic">Beneficio Neto vs Costo de Experiencia</p>
+            </div>
+            <!-- CLV -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Customer Lifetime Value</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-bold text-slate-800">$1,000</span>
+                    <span class="text-xs font-semibold text-indigo-600">High LTV</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-4">Proyección basada en suscripción mensual</p>
+            </div>
+            <!-- CAC -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Costo Adquisición (CAC)</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-bold text-slate-800">$15.50</span>
+                    <span class="text-xs font-semibold text-amber-600">Optimizar</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-4">Promedio por canal digital (LA Retail)</p>
+            </div>
+            <!-- NPS -->
+            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Lealtad (NPS)</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-bold text-slate-800">68</span>
+                    <span class="text-xs font-semibold text-indigo-600">Excelente</span>
+                </div>
+                <div class="flex gap-1 mt-4">
+                    <div class="h-1 flex-1 bg-red-400 rounded-full"></div>
+                    <div class="h-1 flex-1 bg-amber-400 rounded-full"></div>
+                    <div class="h-1 flex-1 bg-indigo-500 rounded-full"></div>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-2">Benchmark: Industria Alimentaria USA</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Strategy 9Ps (Modern Tabs) -->
+        <section id="estrategia" class="glass-card rounded-2xl shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white/50">
+                <h2 class="text-lg font-bold text-slate-800">Estrategia Táctica 9Ps</h2>
+            </div>
+            <div class="flex overflow-x-auto no-scrollbar border-b border-slate-100 bg-white">
+                <button onclick="switchTab('p1')" id="tab-p1" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all tab-active">Producto</button>
+                <button onclick="switchTab('p2')" id="tab-p2" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Precio</button>
+                <button onclick="switchTab('p3')" id="tab-p3" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Plaza</button>
+                <button onclick="switchTab('p4')" id="tab-p4" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Promoción</button>
+                <button onclick="switchTab('p5')" id="tab-p5" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Personas</button>
+                <button onclick="switchTab('p6')" id="tab-p6" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Procesos</button>
+                <button onclick="switchTab('p7')" id="tab-p7" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Presencia Física</button>
+                <button onclick="switchTab('p8')" id="tab-p8" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Productividad</button>
+                <button onclick="switchTab('p9')" id="tab-p9" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Partners</button>
+            </div>
+            <div class="p-8 bg-white min-h-[220px]" id="tab-content">
+                <!-- Content injected by JS -->
+            </div>
+        </section>
+
+        <!-- Section 3: Competitive Benchmarking -->
+        <section id="benchmarking" class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <!-- Table -->
+            <div class="lg:col-span-3 glass-card rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">Benchmarking Competitivo</h2>
+                    <a href="https://www.amazon.com/s?k=organic+quinoa" target="_blank" class="text-xs font-semibold text-indigo-600 hover:underline">Ver en Amazon &rarr;</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold uppercase text-[10px] tracking-widest">
+                            <tr>
+                                <th class="px-6 py-4">Marca / Competidor</th>
+                                <th class="px-6 py-4">Retailer</th>
+                                <th class="px-6 py-4">Precio (USD)</th>
+                                <th class="px-6 py-4">Calidad/Valor</th>
+                                <th class="px-6 py-4">Acción</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Ancient Harvest</td>
-                                <td class="p-4 text-sm">&#x1F4E6; Caja de cartón, bolsa interior</td>
-                                <td class="p-4 text-sm">Tradicional, recetas, Amazon</td>
-                                <td class="p-4 font-mono font-bold">$6.99</td>
-                                <td class="p-4 text-sm">Orgánica, Pre-lavada, Enfoque plant-based</td>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-indigo-50/30 transition">
+                                <td class="px-6 py-4 font-bold text-indigo-700">Andean Pure Grains</td>
+                                <td class="px-6 py-4 text-slate-500">Retail LA / Amazon</td>
+                                <td class="px-6 py-4 font-semibold">$12.99</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex gap-1 text-indigo-500">★★★★★</div>
+                                </td>
+                                <td class="px-6 py-4"><span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-1 rounded">NUESTRO</span></td>
                             </tr>
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Bob's Red Mill</td>
-                                <td class="p-4 text-sm">&#x1F4E6; Bolsa resellable plástica</td>
-                                <td class="p-4 text-sm">Educativa, corporativa, fuerte D2C</td>
-                                <td class="p-4 font-mono font-bold">$7.49</td>
-                                <td class="p-4 text-sm">Grano entero, confianza de marca, sin gluten</td>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-medium">Viva Naturals</td>
+                                <td class="px-6 py-4 text-slate-500">Amazon / Walmart</td>
+                                <td class="px-6 py-4">$14.50</td>
+                                <td class="px-6 py-4 text-amber-500">★★★★☆</td>
+                                <td class="px-6 py-4"><a href="https://www.falabella.com.pe/falabella-pe" target="_blank" class="text-slate-400 hover:text-indigo-600">&#x1F517;</a></td>
                             </tr>
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Trader Joe's</td>
-                                <td class="p-4 text-sm">&#x1F4E6; Bolsa simple transparente</td>
-                                <td class="p-4 text-sm">Catálogo simple, venta en tienda física</td>
-                                <td class="p-4 font-mono font-bold">$4.49</td>
-                                <td class="p-4 text-sm">Marca blanca, accesible, orgánica</td>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-medium">Ancient Harvest</td>
+                                <td class="px-6 py-4 text-slate-500">Whole Foods</td>
+                                <td class="px-6 py-4">$15.20</td>
+                                <td class="px-6 py-4 text-amber-500">★★★★☆</td>
+                                <td class="px-6 py-4"><a href="https://simple.ripley.com.pe/" target="_blank" class="text-slate-400 hover:text-indigo-600">&#x1F517;</a></td>
                             </tr>
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Whole Foods 365</td>
-                                <td class="p-4 text-sm">&#x1F4E6; Bolsa resellable</td>
-                                <td class="p-4 text-sm">Integrado 100% con Amazon Fresh</td>
-                                <td class="p-4 font-mono font-bold">$4.99</td>
-                                <td class="p-4 text-sm">Marca privada premium, gran distribución</td>
-                            </tr>
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Alter Eco</td>
-                                <td class="p-4 text-sm">&#x1F343; Pouch compostable</td>
-                                <td class="p-4 text-sm">Premium, foco en sostenibilidad</td>
-                                <td class="p-4 font-mono font-bold">$8.99</td>
-                                <td class="p-4 text-sm">Comercio justo, agricultura regenerativa</td>
-                            </tr>
-                            <tr class="hover:bg-brand-light transition">
-                                <td class="p-4 font-bold text-brand-primary">Lundberg Family</td>
-                                <td class="p-4 text-sm">&#x1F4E6; Pouch resellable</td>
-                                <td class="p-4 text-sm">Historia familiar, D2C fuerte</td>
-                                <td class="p-4 font-mono font-bold">$7.99</td>
-                                <td class="p-4 text-sm">Cultivo ecológico, trazabilidad</td>
-                            </tr>
-                            <tr class="hover:bg-brand-light transition border-l-4 border-brand-accent bg-orange-50">
-                                <td class="p-4 font-bold text-brand-accent">Andean Pure Grains (Nosotros)</td>
-                                <td class="p-4 text-sm">&#x1F343; Doypack biodegradable con zipper</td>
-                                <td class="p-4 text-sm">E-commerce propio + Amazon FBA</td>
-                                <td class="p-4 font-mono font-bold text-brand-accent">$6.50</td>
-                                <td class="p-4 text-sm font-semibold">Orgánica, Origen Perú directo, Baja Huella Carbono</td>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-medium">Bob's Red Mill</td>
+                                <td class="px-6 py-4 text-slate-500">Target / Amazon</td>
+                                <td class="px-6 py-4">$13.80</td>
+                                <td class="px-6 py-4 text-amber-500">★★★☆☆</td>
+                                <td class="px-6 py-4 text-slate-400">&#x1F517;</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </div>
+            <!-- Bubble Chart -->
+            <div class="lg:col-span-2 glass-card rounded-2xl shadow-sm p-6 flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Posicionamiento</h2>
+                    <p class="text-[10px] text-slate-400">Eje X: Precio | Eje Y: Valor Percibido | Tamaño: Share</p>
+                </div>
+                <div class="chart-container flex-grow">
+                    <canvas id="bubbleChart"></canvas>
+                </div>
+            </div>
+        </section>
 
-            <section id="kpi-mercado" class="scroll-mt-20">
-                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">2. KPI de Competencia: Índice de Valor Percibido (IVP)</h3>
-                <p class="text-gray-600 mb-6">Para identificar nuestro lugar en el mercado, calculamos el <strong>Índice de Valor Percibido (IVP)</strong>. <br><em>Fórmula: IVP = (Calidad de Empaque [1-10] * 0.4) + (Atributos Diferenciadores [1-10] * 0.6) / Precio por Libra</em>. <br>El cuadrante superior derecho representa el posicionamiento ideal (Alto Valor, Precio Competitivo).</p>
-                
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div class="chart-container">
-                        <canvas id="competitorChart"></canvas>
+        <!-- Section 4: Growth & ROI Simulator -->
+        <section id="growth" class="space-y-6">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-1 bg-indigo-600 rounded-full"></div>
+                <h2 class="text-2xl font-bold text-slate-900">Simulador de Growth & ROI</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Inputs -->
+                <div class="lg:col-span-1 glass-card p-8 rounded-2xl shadow-sm space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Inversión Ads ($)</label>
+                            <span id="val-inv" class="text-sm font-bold text-indigo-600">$5,000</span>
+                        </div>
+                        <input type="range" id="inv-marketing" min="1000" max="50000" step="500" value="5000" oninput="updateSimulator()">
                     </div>
-                    <div class="mt-4 text-sm text-gray-500 text-center">
-                        *El tamaño de la burbuja representa la cuota de mercado estimada en retail digital de California.
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Clicks / Visitas</label>
+                            <span id="val-clicks" class="text-sm font-bold text-indigo-600">10,000</span>
+                        </div>
+                        <input type="range" id="clicks" min="1000" max="100000" step="1000" value="10000" oninput="updateSimulator()">
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Tasa Conv. (%)</label>
+                            <span id="val-conv" class="text-sm font-bold text-indigo-600">3%</span>
+                        </div>
+                        <input type="range" id="conv-rate" min="0.1" max="10" step="0.1" value="3" oninput="updateSimulator()">
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Ticket Prom. ($)</label>
+                            <span id="val-aov" class="text-sm font-bold text-indigo-600">$45</span>
+                        </div>
+                        <input type="range" id="aov" min="10" max="200" step="5" value="45" oninput="updateSimulator()">
                     </div>
                 </div>
-            </section>
 
-            <section id="viaje-cliente" class="scroll-mt-20">
-                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">3. Mapa de Viaje del Cliente (Customer Journey Map)</h3>
-                <p class="text-gray-600 mb-6">Análisis del consumidor objetivo (LOHAS - Lifestyles of Health and Sustainability en California). Haga clic en cada etapa para ver los puntos de contacto, frustraciones y oportunidades.</p>
-                
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 relative">
-                        <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 hidden md:block transform -translate-y-1/2"></div>
-                        
-                        <button onclick="updateJourney(0)" class="journey-step active w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
-                            <span class="block text-2xl mb-1">&#x1F50D;</span>
-                            <span class="font-bold text-sm block">1. Descubrimiento</span>
-                        </button>
-                        <button onclick="updateJourney(1)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
-                            <span class="block text-2xl mb-1">&#x1F914;</span>
-                            <span class="font-bold text-sm block">2. Consideración</span>
-                        </button>
-                        <button onclick="updateJourney(2)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
-                            <span class="block text-2xl mb-1">&#x1F6D2;</span>
-                            <span class="font-bold text-sm block">3. Compra</span>
-                        </button>
-                        <button onclick="updateJourney(3)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
-                            <span class="block text-2xl mb-1">&#x1F373;</span>
-                            <span class="font-bold text-sm block">4. Uso / Consumo</span>
-                        </button>
-                        <button onclick="updateJourney(4)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
-                            <span class="block text-2xl mb-1">&#x1F49A;</span>
-                            <span class="font-bold text-sm block">5. Retención</span>
-                        </button>
-                    </div>
-
-                    <div id="journey-content" class="bg-brand-light p-6 rounded-lg border-l-4 border-brand-primary min-h-[200px] transition-opacity duration-300">
-                        <h4 class="text-xl font-bold text-brand-dark mb-2" id="jc-title">1. Descubrimiento</h4>
-                        <div class="grid md:grid-cols-3 gap-6">
-                            <div>
-                                <h5 class="font-bold text-brand-primary mb-1">&#x1F4F1; Puntos de Contacto</h5>
-                                <p class="text-sm text-gray-700" id="jc-touchpoints">Búsqueda en Google ("organic quinoa protein"), Anuncios en Instagram (Influencers fitness), Amazon Search.</p>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-red-600 mb-1">&#x26A0;&#xFE0F; Puntos de Dolor</h5>
-                                <p class="text-sm text-gray-700" id="jc-painpoints">Exceso de opciones, dificultad para saber si realmente es un producto sostenible o solo marketing verde.</p>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-brand-accent mb-1">&#x1F4A1; Oportunidad (Nuestra)</h5>
-                                <p class="text-sm text-gray-700" id="jc-opportunities">SEO enfocado en "Directo de Perú" y "Trazabilidad". Ads mostrando a los agricultores andinos.</p>
-                            </div>
+                <!-- Outputs & Charts -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">CAC Real</p>
+                            <p id="out-cac" class="text-2xl font-bold text-indigo-600 mt-1">$16.6</p>
+                        </div>
+                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Ventas Proyectadas</p>
+                            <p id="out-sales" class="text-2xl font-bold text-emerald-600 mt-1">$13,500</p>
+                        </div>
+                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">ROI (%)</p>
+                            <p id="out-roi" class="text-2xl font-bold text-slate-800 mt-1">170%</p>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <section id="finanzas" class="scroll-mt-20">
-                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">4. KPIs Financieros y Proyecciones</h3>
-                <p class="text-gray-600 mb-6">Métricas unitarias calculadas para la estrategia de penetración directa al consumidor (D2C) y Amazon FBA en el primer año operativo.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-sage flex flex-col items-center text-center">
-                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Costo Adquisición Cliente (CAC)</span>
-                        <span class="text-4xl font-mono font-bold text-brand-dark">$14.50</span>
-                        <span class="text-xs text-gray-400 mt-2">Gasto Ads / Nuevos Clientes</span>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-primary flex flex-col items-center text-center">
-                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Customer Lifetime Value (CLV)</span>
-                        <span class="text-4xl font-mono font-bold text-brand-dark">$68.00</span>
-                        <span class="text-xs text-gray-400 mt-2">Valor proyectado a 2 años (compras recurrentes)</span>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-accent flex flex-col items-center text-center">
-                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Retorno de Inversión (ROI)</span>
-                        <span class="text-4xl font-mono font-bold text-brand-dark">125%</span>
-                        <span class="text-xs text-gray-400 mt-2">Proyección Fin Año 1</span>
+                    <div class="glass-card p-6 rounded-2xl shadow-sm h-[280px]">
+                        <canvas id="growthChart"></canvas>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h4 class="text-lg font-bold text-brand-dark mb-4 text-center">Relación CLV vs CAC (Ratio Óptimo > 3:1)</h4>
-                    <div class="chart-container">
-                        <canvas id="financialChart"></canvas>
-                    </div>
-                    <p class="text-center text-sm text-gray-600 mt-4">Nuestro ratio proyectado de <strong>4.6x</strong> indica un modelo de crecimiento sostenible en canales digitales.</p>
-                </div>
-            </section>
-
-            <section id="referencias" class="scroll-mt-20 border-t border-gray-300 pt-8 pb-12">
-                <h3 class="text-xl font-serif font-bold text-brand-dark mb-4">5. Fuentes Online y Referencias Bibliográficas (Norma APA)</h3>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <ul class="list-none space-y-4 text-sm text-gray-700">
-                        <li class="pl-4 border-l-2 border-brand-sage">
-                            Amazon.com. (2026). <em>Categoría de Granos Orgánicos y Quinua: Los más vendidos</em>. Recuperado el 15 de marzo de 2026, de <a href="#" class="text-brand-primary underline break-all">https://www.amazon.com/Best-Sellers-Quinoa/zgbs/grocery/16322211</a>
-                        </li>
-                        <li class="pl-4 border-l-2 border-brand-sage">
-                            Programa de las Naciones Unidas para el Desarrollo. (2021). <em>Blockchain for Agri-Food Traceability: Implementing technology in sustainable supply chains</em>. Recuperado del archivo del PNUD.
-                        </li>
-                        <li class="pl-4 border-l-2 border-brand-sage">
-                            Qubit Capital. (2024). <em>LTV:CAC Benchmarks for eCommerce: Understanding optimal ratios</em>. Recuperado de documentación de capital de riesgo para startups D2C.
-                        </li>
-                        <li class="pl-4 border-l-2 border-brand-sage">
-                            The Packer. (2025). <em>Fresh produce anchoring 2026 consumer wellness movement</em>. Recuperado del reporte sobre tendencias de compra en supermercados.
-                        </li>
-                        <li class="pl-4 border-l-2 border-brand-sage">
-                            Whole Foods Market. (2025). <em>365 by Whole Foods Market Product Catalog</em>. Recuperado el 12 de marzo de 2026, de <a href="#" class="text-brand-primary underline break-all">https://www.wholefoodsmarket.com/products/brands/365-by-whole-foods-market</a>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-
-        </div>
     </main>
 
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Integrantes Proyecto BI - ADEX 2026</p>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 mt-4 text-sm font-medium text-slate-600">
+                        <span>GIANELLA ARMAS CANA</span>
+                        <span>MARILIN MEDINA APOLINARIO</span>
+                        <span>ROSAMIA CÉSPEDES DURAND</span>
+                        <span>ERIC MOZOMBITE SHISHCO</span>
+                        <span>PAOLA MAMANI SÁNCHEZ</span>
+                        <span>TAMIA OBREGÓN ESPINOZA</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 grayscale opacity-50">
+                    <div class="h-8 w-8 bg-slate-300 rounded"></div>
+                    <div class="h-8 w-20 bg-slate-300 rounded"></div>
+                </div>
+            </div>
+            <div class="text-center mt-8 pt-8 border-t border-slate-100">
+                <p class="text-[10px] text-slate-300 uppercase tracking-[4px]">Andean Pure Grains &copy; 2026</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Mobile Menu Logic
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
-
-        const mobileLinks = document.querySelectorAll('#mobile-menu a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.add('hidden');
-            });
-        });
-
-        // Data for Competitor Bubble Chart
-        // X = Price, Y = IVP (Value Index calculated), r = Market Share relative
-        const competitorData = {
-            datasets: [
-                {
-                    label: 'Ancient Harvest',
-                    data: [{x: 6.99, y: 1.15, r: 15}],
-                    backgroundColor: 'rgba(156, 163, 175, 0.6)',
-                    borderColor: 'rgb(156, 163, 175)'
-                },
-                {
-                    label: 'Bob\'s Red Mill',
-                    data: [{x: 7.49, y: 1.20, r: 25}],
-                    backgroundColor: 'rgba(107, 114, 128, 0.6)',
-                    borderColor: 'rgb(107, 114, 128)'
-                },
-                {
-                    label: 'Trader Joe\'s',
-                    data: [{x: 4.49, y: 1.35, r: 20}],
-                    backgroundColor: 'rgba(75, 85, 99, 0.6)',
-                    borderColor: 'rgb(75, 85, 99)'
-                },
-                {
-                    label: 'Whole Foods 365',
-                    data: [{x: 4.99, y: 1.40, r: 22}],
-                    backgroundColor: 'rgba(55, 65, 81, 0.6)',
-                    borderColor: 'rgb(55, 65, 81)'
-                },
-                {
-                    label: 'Alter Eco',
-                    data: [{x: 8.99, y: 0.95, r: 10}],
-                    backgroundColor: 'rgba(163, 177, 138, 0.8)',
-                    borderColor: 'rgb(163, 177, 138)'
-                },
-                {
-                    label: 'Andean Pure Grains (Nosotros)',
-                    data: [{x: 6.50, y: 1.45, r: 12}], // High value, competitive price
-                    backgroundColor: 'rgba(218, 138, 103, 0.9)', // Accent color
-                    borderColor: 'rgb(218, 138, 103)'
-                }
-            ]
+        // Data Store 9Ps
+        const data9Ps = {
+            p1: { title: "Producto", content: "Quinua Orgánica de los Andes Peruanos en grano (Variedades Blanca y Tricolor). Partida Arancelaria 1008.50.90.00. Valor agregado: Proceso de eliminación de saponina garantizado, certificaciones USDA Organic y Non-GMO." },
+            p2: { title: "Precio", content: "Estrategia basada en valor (Premium Positioning). Retail Price: $12.99 - $13.50 por unidad de 1lb (aprox. 16oz). Margen proyectado superior al 45% mediante eliminación de intermediarios en canal D2C." },
+            p3: { title: "Plaza", content: "Omnicanalidad: Foco inicial en Los Ángeles, CA (Whole Foods, Trader Joe's) y canal digital vía Amazon FBA para cobertura nacional eficiente desde la Costa Oeste." },
+            p4: { title: "Promoción", content: "Marketing Digital enfocado en 'Wellness' y 'Plant-Based Proteins'. Campañas en Instagram/TikTok dirigidas a demografías conscientes de la salud (25-45 años). Email marketing recurrente." },
+            p5: { title: "Personas", content: "Capacitación de 15 productores en comunidades altoandinas bajo comercio justo. Equipo de CX bilingüe enfocado en el mercado anglosajón para soporte preventa y posventa." },
+            p6: { title: "Procesos", content: "Cadena de suministro con Blockchain para trazabilidad total. Procesos estandarizados de lavado (Triple Wash) y secado centrífugo para asegurar 0% amargor en el consumidor final." },
+            p7: { title: "Presencia Física", content: "Empaque Doypack resellable (Eco-friendly) con diseño minimalista 'Stripe-style'. Etiquetas informativas con recetas rápidas (QR) y storytelling de la comunidad de origen." },
+            p8: { title: "Productividad", content: "Rendimiento optimizado de 2.5 TN/Ha mediante biofertilizantes orgánicos. Tasa de conversión web objetivo del 3.5% para maximizar el tráfico del embudo." },
+            p9: { title: "Partners", content: "Alianza estratégica con Importadores Directos en Long Beach y operadores logísticos de última milla para reducción de tiempos de entrega en California." }
         };
 
-        const ctxComp = document.getElementById('competitorChart').getContext('2d');
-        new Chart(ctxComp, {
-            type: 'bubble',
-            data: competitorData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': Precio $' + context.raw.x + ' | Valor: ' + context.raw.y;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Precio Promedio por Libra (USD) - Menor es mejor hacia la izq.', font: {weight: 'bold'} },
-                        reverse: true, // Lower price is better, so it's on the right of the plot theoretically, but usually lower X is left. Let's keep normal but note it.
-                        min: 3, max: 10
-                    },
-                    y: {
-                        title: { display: true, text: 'Índice de Valor Percibido (IVP)', font: {weight: 'bold'} },
-                        min: 0.8, max: 1.6
-                    }
-                }
-            }
-        });
-
-        // Data for Financial Bar Chart
-        const ctxFin = document.getElementById('financialChart').getContext('2d');
-        new Chart(ctxFin, {
-            type: 'bar',
-            data: {
-                labels: ['Métricas D2C (E-commerce)', 'Métricas Amazon FBA', 'Promedio Industria'],
-                datasets: [
-                    {
-                        label: 'CAC (Costo Adquisición)',
-                        data: [12.50, 16.50, 22.00],
-                        backgroundColor: 'rgba(163, 177, 138, 0.8)', // Sage
-                    },
-                    {
-                        label: 'CLV (Valor de Vida)',
-                        data: [75.00, 61.00, 50.00],
-                        backgroundColor: 'rgba(88, 129, 87, 0.9)', // Primary
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': $' + context.raw.toFixed(2);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: 'Valor (USD)' }
-                    }
-                }
-            }
-        });
-
-        // Customer Journey Logic
-        const journeyData = [
-            {
-                title: "1. Descubrimiento",
-                touchpoints: "Búsqueda en Google ('organic quinoa protein'), Anuncios en Instagram (Influencers fitness), Navegación en Amazon Categoría Saludable.",
-                painpoints: "Exceso de opciones, dificultad para saber si realmente es un producto orgánico sostenible o solo marketing verde (greenwashing).",
-                opportunities: "SEO enfocado en 'Directo de Perú' y 'Trazabilidad'. Ads mostrando a los agricultores andinos y certificaciones reales."
-            },
-            {
-                title: "2. Consideración",
-                touchpoints: "Lectura de reseñas en Amazon, revisión de tabla nutricional en web, comparación de precios en Whole Foods vs online.",
-                painpoints: "Confusión sobre la diferencia entre quinua blanca y tricolor. Preocupación por el residuo de saponina (sabor amargo).",
-                opportunities: "Página de producto muy clara destacando 'Pre-Lavada / Libre de Saponina'. Infografía comparando valores proteicos."
-            },
-            {
-                title: "3. Compra",
-                touchpoints: "Carrito de Amazon (1-Click Buy), Checkout en web propia D2C, Compra física en retail impulsiva.",
-                painpoints: "Costos de envío altos en web propia. Fricción si la pasarela de pago no es conocida (Apple Pay / PayPal requeridos).",
-                opportunities: "Ofrecer envío gratis en compras mayores a $30. Integrar 'Subscribe & Save' desde el primer momento."
-            },
-            {
-                title: "4. Uso / Consumo",
-                touchpoints: "Apertura del empaque (Unboxing), cocción del producto, consumo familiar.",
-                painpoints: "Empaque difícil de volver a cerrar (pierde frescura). La quinua queda pastosa si no hay instrucciones claras de agua/tiempo.",
-                opportunities: "Empaque con zipper de alta calidad. Incluir un código QR en el empaque que lleve a un video de 30 segundos de 'Cómo cocinarla perfecto'."
-            },
-            {
-                title: "5. Retención",
-                touchpoints: "Email marketing (recetas nuevas), Notificación de re-stock, Programa de lealtad.",
-                painpoints: "Olvido de recompra, aburrimiento de comerla de la misma forma, abandono si el precio sube sin justificación.",
-                opportunities: "Emails mensuales con recetas innovadoras. Descuento del 15% automático en el modelo de suscripción mensual."
-            }
-        ];
-
-        function updateJourney(index) {
+        function switchTab(p) {
             // Update buttons
-            const buttons = document.querySelectorAll('.journey-step');
-            buttons.forEach((btn, i) => {
-                if(i === index) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            document.getElementById('tab-' + p).classList.add('tab-active');
+            
+            // Update content
+            const content = data9Ps[p];
+            document.getElementById('tab-content').innerHTML = `
+                <div class="animate-in fade-in slide-in-from-left-4 duration-300">
+                    <h3 class="text-xl font-bold text-indigo-600 mb-3">${content.title}</h3>
+                    <p class="text-slate-600 leading-relaxed max-w-3xl">${content.content}</p>
+                </div>
+            `;
+        }
+
+        // Charts
+        let bubbleChart, growthChart;
+
+        function initCharts() {
+            const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
+            bubbleChart = new Chart(ctxBubble, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        { label: 'Andean Pure Grains', data: [{ x: 13, y: 9.5, r: 25 }], backgroundColor: '#4f46e5' },
+                        { label: 'Viva Naturals', data: [{ x: 14.5, y: 8, r: 20 }], backgroundColor: '#94a3b8' },
+                        { label: 'Ancient Harvest', data: [{ x: 15.2, y: 8.5, r: 15 }], backgroundColor: '#cbd5e1' },
+                        { label: 'Bob\'s Red Mill', data: [{ x: 13.8, y: 7, r: 18 }], backgroundColor: '#e2e8f0' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { title: { display: true, text: 'Calidad / Valor' }, min: 5, max: 10 },
+                        x: { title: { display: true, text: 'Precio (USD)' }, min: 10, max: 18 }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
 
-            // Update content with slight fade effect
-            const contentDiv = document.getElementById('journey-content');
-            contentDiv.style.opacity = '0';
-            
-            setTimeout(() => {
-                document.getElementById('jc-title').innerText = journeyData[index].title;
-                document.getElementById('jc-touchpoints').innerText = journeyData[index].touchpoints;
-                document.getElementById('jc-painpoints').innerText = journeyData[index].painpoints;
-                document.getElementById('jc-opportunities').innerText = journeyData[index].opportunities;
-                contentDiv.style.opacity = '1';
-            }, 150);
+            const ctxGrowth = document.getElementById('growthChart').getContext('2d');
+            growthChart = new Chart(ctxGrowth, {
+                type: 'bar',
+                data: {
+                    labels: ['Inversión', 'Ventas (Neto)'],
+                    datasets: [{
+                        label: 'Proyección Monetaria ($)',
+                        data: [5000, 13500],
+                        backgroundColor: ['#e2e8f0', '#10b981'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
         }
+
+        function updateSimulator() {
+            const inv = parseFloat(document.getElementById('inv-marketing').value);
+            const clicks = parseFloat(document.getElementById('clicks').value);
+            const rate = parseFloat(document.getElementById('conv-rate').value) / 100;
+            const aov = parseFloat(document.getElementById('aov').value);
+
+            // Calc
+            const conversions = clicks * rate;
+            const cac = conversions > 0 ? (inv / conversions) : 0;
+            const sales = conversions * aov;
+            const roi = inv > 0 ? ((sales - inv) / inv) * 100 : 0;
+
+            // UI
+            document.getElementById('val-inv').innerText = `$${inv.toLocaleString()}`;
+            document.getElementById('val-clicks').innerText = clicks.toLocaleString();
+            document.getElementById('val-conv').innerText = (rate * 100).toFixed(1) + '%';
+            document.getElementById('val-aov').innerText = `$${aov}`;
+
+            document.getElementById('out-cac').innerText = `$${cac.toFixed(2)}`;
+            document.getElementById('out-sales').innerText = `$${sales.toLocaleString()}`;
+            document.getElementById('out-roi').innerText = roi.toFixed(0) + '%';
+
+            // Chart
+            growthChart.data.datasets[0].data = [inv, sales];
+            growthChart.update();
+        }
+
+        // Boot
+        window.onload = () => {
+            switchTab('p1');
+            initCharts();
+            updateSimulator();
+        };
     </script>
 </body>
 </html>
