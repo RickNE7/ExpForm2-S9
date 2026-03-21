@@ -1,811 +1,537 @@
 <!DOCTYPE html>
-<html lang="es-PE">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estrategia Materia Prima y KPIs: Quinua 2026 - ADEX</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Azeret+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Plan Estratégico: Quinua Orgánica USA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Earthy Naturals (Cream, Sage Green, Deep Green, Soft Brown, Muted Orange for accents) -->
+    <!-- Application Structure Plan: The SPA uses a vertical scrolling dashboard layout with a sticky side navigation menu. This structure was chosen to guide the user linearly through the analytical process requested: from understanding the competitive landscape (Competitors & KPI) to mapping the user experience (Customer Journey), and finally validating the business viability (Financial KPIs). It allows for deep dives into specific sections while maintaining the overall context of the export plan. -->
+    <!-- Visualization & Content Choices: 
+         1. Competitor Analysis -> Goal: Compare -> Method: Interactive Table -> Interaction: Hover states and sortable columns (conceptualized via JS) -> Justification: Tables are best for comparing multi-variable discrete data (price, packaging, etc.).
+         2. Market Position (KPI) -> Goal: Relationships/Compare -> Method: Chart.js Bubble Chart -> Interaction: Tooltips with brand details -> Justification: Bubble charts perfectly map position based on Price vs Quality, with bubble size representing market presence.
+         3. Customer Journey -> Goal: Process/Change -> Method: HTML/Tailwind Interactive Timeline -> Interaction: Clickable stages to reveal pain points and emotions -> Justification: Avoids SVG/Mermaid while providing a highly engaging, step-by-step narrative.
+         4. Financial KPIs -> Goal: Inform/Compare -> Method: Metric Cards & Chart.js Bar Chart -> Interaction: Tooltips -> Justification: Cards give immediate bottom-line visibility, while the bar chart visually contrasts CLV vs CAC.
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#f4f1ea', // Cream background
+                            sage: '#a3b18a',  // Muted green
+                            primary: '#588157',// Deep green
+                            dark: '#344e41',   // Very dark green
+                            accent: '#da8a67'  // Muted terracotta/orange
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* --- VARIABLES CORPORATIVAS ADEX --- */
-        :root {
-            --primary: #3E2723; /* Marrón oscuro (Tierra/Agro) */
-            --accent: #D4AF37; /* Dorado (Grano de Oro) */
-            --success: #2E7D32; /* Verde (Orgánico/Finanzas) */
-            --info: #1565C0; /* Azul (Estrategia) */
-            --danger: #C62828; /* Rojo (Fricciones/Riesgos) */
-            --bg-light: #f4f6f8;
-            --bg-card: #FFFFFF;
-            --text-dark: #212121;
-            --text-muted: #616161;
+        body {
+            background-color: #f4f1ea;
+            color: #344e41;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        body { 
-            background-color: #1a1a1a; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden; /* Evita cualquier scroll en la página */
-            font-family: 'Arimo', sans-serif; 
-            color: var(--text-dark);
-        }
-
-        /* --- CONTENEDOR PRINCIPAL (16:9 Aspect Ratio) --- */
-        #presentation-area {
+        .chart-container {
             position: relative;
             width: 100%;
-            max-width: 1280px;
-            aspect-ratio: 16 / 9;
-            background-color: var(--bg-card);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            overflow: hidden;
-        }
-
-        /* --- CONTENEDOR DE DIAPOSITIVA --- */
-        .slide-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 40px 70px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease-in-out, visibility 0.5s;
-            background-color: var(--bg-card);
-            z-index: 1;
-        }
-
-        .slide-container.active {
-            opacity: 1;
-            visibility: visible;
-            z-index: 10;
-        }
-
-        /* Banner Superior ADEX */
-        .slide-container::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 12px;
-            background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 50%, var(--success) 100%);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
         }
         
-        .footer-text { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); font-size: 13px; color: #999; font-family: 'Azeret Mono', monospace; }
-        .adex-logo { position: absolute; bottom: 25px; left: 70px; font-weight: 700; color: var(--primary); font-size: 16px; letter-spacing: 1px; }
-
-        /* --- CONTROLES DE NAVEGACIÓN DISCRETOS --- */
-        .nav-controls {
-            position: absolute;
-            bottom: 20px;
-            right: 40px;
-            display: flex;
-            gap: 15px;
-            z-index: 100; /* Siempre encima de las diapositivas */
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
         }
 
-        .btn-nav {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--primary);
-            border: 1px solid var(--accent);
-            padding: 8px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-family: 'Azeret Mono', monospace;
-            font-size: 14px;
-            font-weight: bold;
+        .journey-step {
             transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-
-        .btn-nav:hover {
-            background: var(--accent);
-            color: #FFF;
-            transform: translateY(-2px);
+        .journey-step.active {
+            background-color: #588157;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-
-        /* --- TIPOGRAFÍA --- */
-        h1, h2, h3, h4 { color: var(--primary); font-weight: 700; margin: 0; }
-        h2.slide-title {
-            font-size: 34px; margin-bottom: 20px; width: 100%; text-align: left;
-            border-bottom: 2px solid #EEE; padding-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-shrink: 0;
-        }
-        .slide-title span {
-            font-size: 14px; background: #FFF8E7; color: var(--accent); padding: 6px 18px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-        }
-        p, li { font-size: 16px; line-height: 1.5; }
-
-        /* --- LAYOUTS --- */
-        .content-area { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; flex-grow: 1; overflow: hidden;}
-        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; height: 100%; align-items: center; }
-        .three-column { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; height: 100%; align-items: stretch; }
-
-        /* --- TARJETAS UI --- */
-        .info-card {
-            background: #FAFAFA; border: 1px solid #E0E0E0; border-radius: 12px; padding: 20px;
-            display: flex; flex-direction: column; justify-content: flex-start;
-        }
-        .info-card h3 { color: var(--success); font-size: 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
         
-        .img-placeholder {
-            width: 100%;
-            height: 100%;
-            min-height: 350px;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-family: 'Azeret Mono', monospace;
-            font-size: 16px;
-            text-align: center;
-            padding: 30px;
-            border: 2px dashed var(--accent);
-            border-radius: 15px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        /* --- CUSTOMER JOURNEY MAP --- */
-        .journey-stage { background: #fff; border-radius: 15px; padding: 25px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; height: 100%; display: flex; flex-direction: column; justify-content: center;}
-        .journey-icon { font-size: 50px; position: absolute; right: 25px; top: 25px; opacity: 0.1; }
-        .touchpoints { margin-top: 15px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; }
-        .theory-box { background: #FFF8E7; border-left: 5px solid var(--accent); padding: 12px; margin-bottom: 15px; border-radius: 8px; font-size: 14px; }
-
-        /* --- SIMULADOR EDUCATIVO --- */
-        .sim-grid { display: grid; grid-template-columns: 35% 65%; gap: 30px; height: 100%; align-items: stretch;}
-        .sim-panel { background: #FAFAFA; border: 1px solid #E0E0E0; border-radius: 15px; padding: 25px; display: flex; flex-direction: column; overflow-y: auto;}
-        .sim-panel h3 { margin-bottom: 15px; font-size: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
-        
-        .input-group { margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .input-group label { font-size: 13px; color: #555; font-weight: bold; }
-        .input-group input { 
-            width: 90px; padding: 6px; border: 1px solid #CCC; border-radius: 6px; 
-            font-size: 14px; font-family: 'Azeret Mono', monospace; text-align: right;
+        ::-webkit-scrollbar-track {
+            background: #f4f1ea;
         }
-
-        .kpi-board { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .kpi-box { background: #FFF; border-radius: 10px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
-        .kpi-box.blue { border-top-color: var(--info); }
-        .kpi-box.green { border-top-color: var(--success); }
-        .kpi-box.gold { border-top-color: var(--accent); }
-        .kpi-title { font-size: 11px; color: #777; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-        .kpi-value { font-size: 24px; font-weight: bold; color: var(--primary); font-family: 'Azeret Mono', monospace; }
-
-        .edu-panel { background: #E3F2FD; border: 1px solid #90CAF9; border-radius: 10px; padding: 15px; margin-top: auto; display: flex; gap: 15px; align-items: flex-start; }
-        .highlight { color: var(--accent); font-weight: bold; }
+        ::-webkit-scrollbar-thumb {
+            background: #a3b18a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #588157;
+        }
     </style>
 </head>
-<body>
+<body class="antialiased flex h-screen overflow-hidden">
 
-    <!-- CONTENEDOR GLOBAL DE LA PRESENTACIÓN -->
-    <div id="presentation-area">
+    <aside class="w-64 bg-brand-dark text-white flex flex-col hidden md:flex">
+        <div class="p-6 border-b border-brand-primary">
+            <h1 class="text-2xl font-serif font-bold tracking-tight text-brand-light">Andean Pure Grains</h1>
+            <p class="text-xs text-brand-sage mt-2 uppercase tracking-wider">Plan USA 2026</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-2 px-4">
+                <li><a href="#intro" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Inicio</a></li>
+                <li><a href="#competencia" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Análisis de Competencia</a></li>
+                <li><a href="#kpi-mercado" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Posicionamiento y KPI</a></li>
+                <li><a href="#viaje-cliente" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Viaje del Cliente</a></li>
+                <li><a href="#finanzas" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">KPIs Financieros</a></li>
+                <li><a href="#referencias" class="block px-4 py-2 rounded-lg hover:bg-brand-primary transition duration-200">Referencias (APA)</a></li>
+            </ul>
+        </nav>
+        <div class="p-4 bg-brand-primary text-xs text-brand-light text-center">
+            Reporte Ejecutivo Interactivo
+        </div>
+    </aside>
 
-        <!-- ==========================================
-             DIAPOSITIVA 1: PORTADA
-             ========================================== -->
-        <div class="slide-container active" id="slide1">
-            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center;">
-                <div style="background: var(--primary); color: #FFF; padding: 6px 24px; border-radius: 20px; font-family: 'Azeret Mono'; font-size: 15px; margin-bottom: 25px; letter-spacing: 2px;">EVALUACIÓN DE APRENDIZAJE 1</div>
-                <h1 style="font-size: 55px; margin: 10px 0; line-height: 1.1;">Teoría y Práctica del Customer Journey &<br><span style="color: var(--accent);">Métricas Financieras (KPIs)</span></h1>
-                <p style="font-size: 22px; color: #5D4037; margin-bottom: 30px; margin-top: 15px;">Proyecto: Exportación de Quinua en Grano (EE.UU. 2026)</p>
+    <main class="flex-1 overflow-y-auto bg-brand-light">
+        <header class="md:hidden bg-brand-dark text-white p-4 sticky top-0 z-50 flex justify-between items-center">
+            <h1 class="text-xl font-serif font-bold">Andean Pure Grains</h1>
+            <button id="mobile-menu-btn" class="text-2xl">&#9776;</button>
+        </header>
+        
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-primary text-white p-4 space-y-2">
+            <a href="#intro" class="block py-2 border-b border-brand-sage">Inicio</a>
+            <a href="#competencia" class="block py-2 border-b border-brand-sage">Competencia</a>
+            <a href="#kpi-mercado" class="block py-2 border-b border-brand-sage">Posicionamiento KPI</a>
+            <a href="#viaje-cliente" class="block py-2 border-b border-brand-sage">Viaje del Cliente</a>
+            <a href="#finanzas" class="block py-2 border-b border-brand-sage">Finanzas</a>
+        </div>
+
+        <div class="max-w-6xl mx-auto p-6 md:p-10 space-y-16">
+
+            <section id="intro" class="pt-8">
+                <div class="bg-white rounded-2xl shadow-sm p-8 border-l-8 border-brand-accent">
+                    <h2 class="text-3xl md:text-5xl font-serif font-bold text-brand-dark mb-4">Plan Estratégico de Exportación a Los Ángeles, USA</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        Este panel interactivo consolida el análisis de mercado para la introducción de Quinua Peruana Orgánica (Blanca y Tricolor). A continuación, se presenta un desglose de los competidores clave en retail digital (Amazon, Whole Foods), el cálculo del KPI de competitividad, el mapa de viaje del consumidor objetivo californiano y las proyecciones financieras críticas (ROI, CLV, CAC).
+                    </p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-brand-light p-4 rounded-lg">
+                            <span class="block text-2xl mb-1">&#x1F33E;</span>
+                            <span class="font-bold text-brand-dark">Producto</span>
+                            <span class="block text-sm text-gray-600">Quinua Orgánica</span>
+                        </div>
+                        <div class="bg-brand-light p-4 rounded-lg">
+                            <span class="block text-2xl mb-1">&#x1F30D;</span>
+                            <span class="font-bold text-brand-dark">Destino</span>
+                            <span class="block text-sm text-gray-600">Los Ángeles, CA</span>
+                        </div>
+                        <div class="bg-brand-light p-4 rounded-lg">
+                            <span class="block text-2xl mb-1">&#x1F4E6;</span>
+                            <span class="font-bold text-brand-dark">Partida</span>
+                            <span class="block text-sm text-gray-600">1008.50.90.00</span>
+                        </div>
+                        <div class="bg-brand-light p-4 rounded-lg">
+                            <span class="block text-2xl mb-1">&#x1F4C8;</span>
+                            <span class="font-bold text-brand-dark">Enfoque</span>
+                            <span class="block text-sm text-gray-600">B2C D2C e-commerce</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="competencia" class="scroll-mt-20">
+                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">1. Análisis de Competencia Directa e Indirecta</h3>
+                <p class="text-gray-600 mb-6">Evaluación de 7 marcas líderes en el mercado estadounidense (Amazon, Tienda Mía, Whole Foods) basada en sus estrategias de empaque, presencia digital, precios por libra y propuesta de valor (características).</p>
                 
-                <div style="background: #FFF8E7; padding: 30px 50px; border-radius: 15px; border: 1px dashed var(--accent); width: 100%; max-width: 900px;">
-                    <p style="font-weight: bold; color: #8D6E63; margin-bottom: 20px; letter-spacing: 2px;">EQUIPO DE TRABAJO (ADEX ESCUELA)</p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 16px; text-align: left;">
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Gianella Armas Cana</div>
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Marilin Medina Apolinario</div>
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Rosamía Céspedes Durand</div>
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Eric Mozombite Shishco</div>
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Paola Mamani Sanchez</div>
-                        <div><span style="color:var(--accent); font-weight:bold; font-family:'Azeret Mono';">[100%]</span> Tamia Obregón Espinoza</div>
-                    </div>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-brand-dark text-white">
+                                <th class="p-4 font-semibold">Empresa / Marca</th>
+                                <th class="p-4 font-semibold">Empaque</th>
+                                <th class="p-4 font-semibold">Página Web / Canal</th>
+                                <th class="p-4 font-semibold">Precio Prom. (USD/lb)</th>
+                                <th class="p-4 font-semibold">Características Destacadas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Ancient Harvest</td>
+                                <td class="p-4 text-sm">&#x1F4E6; Caja de cartón, bolsa interior</td>
+                                <td class="p-4 text-sm">Tradicional, recetas, Amazon</td>
+                                <td class="p-4 font-mono font-bold">$6.99</td>
+                                <td class="p-4 text-sm">Orgánica, Pre-lavada, Enfoque plant-based</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Bob's Red Mill</td>
+                                <td class="p-4 text-sm">&#x1F4E6; Bolsa resellable plástica</td>
+                                <td class="p-4 text-sm">Educativa, corporativa, fuerte D2C</td>
+                                <td class="p-4 font-mono font-bold">$7.49</td>
+                                <td class="p-4 text-sm">Grano entero, confianza de marca, sin gluten</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Trader Joe's</td>
+                                <td class="p-4 text-sm">&#x1F4E6; Bolsa simple transparente</td>
+                                <td class="p-4 text-sm">Catálogo simple, venta en tienda física</td>
+                                <td class="p-4 font-mono font-bold">$4.49</td>
+                                <td class="p-4 text-sm">Marca blanca, accesible, orgánica</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Whole Foods 365</td>
+                                <td class="p-4 text-sm">&#x1F4E6; Bolsa resellable</td>
+                                <td class="p-4 text-sm">Integrado 100% con Amazon Fresh</td>
+                                <td class="p-4 font-mono font-bold">$4.99</td>
+                                <td class="p-4 text-sm">Marca privada premium, gran distribución</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Alter Eco</td>
+                                <td class="p-4 text-sm">&#x1F343; Pouch compostable</td>
+                                <td class="p-4 text-sm">Premium, foco en sostenibilidad</td>
+                                <td class="p-4 font-mono font-bold">$8.99</td>
+                                <td class="p-4 text-sm">Comercio justo, agricultura regenerativa</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition">
+                                <td class="p-4 font-bold text-brand-primary">Lundberg Family</td>
+                                <td class="p-4 text-sm">&#x1F4E6; Pouch resellable</td>
+                                <td class="p-4 text-sm">Historia familiar, D2C fuerte</td>
+                                <td class="p-4 font-mono font-bold">$7.99</td>
+                                <td class="p-4 text-sm">Cultivo ecológico, trazabilidad</td>
+                            </tr>
+                            <tr class="hover:bg-brand-light transition border-l-4 border-brand-accent bg-orange-50">
+                                <td class="p-4 font-bold text-brand-accent">Andean Pure Grains (Nosotros)</td>
+                                <td class="p-4 text-sm">&#x1F343; Doypack biodegradable con zipper</td>
+                                <td class="p-4 text-sm">E-commerce propio + Amazon FBA</td>
+                                <td class="p-4 font-mono font-bold text-brand-accent">$6.50</td>
+                                <td class="p-4 text-sm font-semibold">Orgánica, Origen Perú directo, Baja Huella Carbono</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Ciclo 2026-I | Partida: 1008.50.90.00</div>
-        </div>
+            </section>
 
-        <!-- ==========================================
-             DIAPOSITIVA 2: TEORÍA Y LINEAMIENTOS
-             ========================================== -->
-        <div class="slide-container" id="slide2">
-            <h2 class="slide-title">Marco Teórico y Lineamientos <span>SEMANA 05</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div>
-                        <h3 style="color: var(--info); margin-bottom: 15px; font-size: 22px;"><i class="fa-solid fa-book-open"></i> Teoría del Customer Journey Map</h3>
-                        <div class="theory-box" style="border-left-color: var(--info);">
-                            <p style="margin-bottom: 10px;">Según la revista <em>Economía</em> y <em>Lucidchart</em>, el Customer Journey es el conjunto de interacciones que tiene un consumidor desde que detecta una necesidad hasta que utiliza un producto y se vuelve promotor.</p>
-                            <p><strong>Fases Teóricas:</strong></p>
-                            <ol style="margin-left: 20px; font-size: 14px; margin-top: 5px;">
-                                <li>Conciencia (Awareness)</li>
-                                <li>Consideración (Evaluación de opciones)</li>
-                                <li>Decisión / Compra (Conversión)</li>
-                                <li>Experiencia / Retención (Uso)</li>
-                                <li>Fidelización y Promoción (Advocacy)</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 style="color: var(--success); margin-bottom: 15px; font-size: 22px;"><i class="fa-solid fa-list-check"></i> Lineamientos ADEX</h3>
-                        <ul class="fa-ul" style="gap: 15px; display: flex; flex-direction: column;">
-                            <li><span class="fa-li"><i class="fa-solid fa-route" style="color: var(--accent);"></i></span>Mapear las fases e integrarlo con <strong>Redes Sociales</strong>.</li>
-                            <li><span class="fa-li"><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger);"></i></span>Identificar las <strong>Fricciones</strong> operativas y de mercado.</li>
-                            <li><span class="fa-li"><i class="fa-solid fa-calculator" style="color: var(--success);"></i></span>Calcular 3 indicadores financieros: <strong>ROI, CLV y CAC</strong> usando utilidades realistas (30%).</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Fundamentos Teóricos de la Presentación</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 3: PASOS 1 Y 2 (BUYER PERSONA)
-             ========================================== -->
-        <div class="slide-container" id="slide3">
-            <h2 class="slide-title">Pasos 1 y 2: Objetivos y Buyer Persona <span>INICIO DEL MAPEO</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-basket-shopping" style="font-size: 50px; margin-bottom: 15px; color: var(--accent);"></i><br>
-                                            </div>
-                    <div>
-                        <div class="theory-box">
-                            <strong>Teoría Aplicada:</strong> Para crear un CJM, el paso 1 es "Establecer objetivos claros" y el paso 2 es "Crear Buyer Personas" detallando su demografía, comportamientos y necesidades reales.
-                        </div>
-                        
-                        <h3 style="font-size: 30px; color: var(--primary); margin-bottom: 5px;">Jennifer (35 años)</h3>
-                        <p style="font-family: 'Azeret Mono'; color: #777; margin-bottom: 15px; font-size: 14px;">"The LOHAS Meal Prepper" | California, EE.UU.</p>
-                        
-                        <ul style="margin-left: 20px; font-size: 15px;">
-                            <li style="margin-bottom: 10px;"><strong>Comportamiento:</strong> Madre profesional. Compra ingredientes puros (grano crudo) para su "Batch cooking" dominical.</li>
-                            <li style="margin-bottom: 10px;"><strong>Necesidad:</strong> Proteína vegetal limpia. No tiene tiempo para lavar la quinua (odia el sabor a saponina).</li>
-                            <li><strong>Objetivo del CJM:</strong> Mejorar su retención y asegurar que nuestro producto exportado cumpla sus exigencias éticas y de pureza.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Definición del Target B2C y Metas</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 4: FASE 1 - CONCIENCIA
-             ========================================== -->
-        <div class="slide-container" id="slide4">
-            <h2 class="slide-title">Fase 1: Conciencia (Awareness) <span>INTEGRACIÓN RR.SS.</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div>
-                        <div class="journey-stage" style="border-top: 6px solid var(--info);">
-                            <i class="fa-solid fa-search journey-icon" style="color: var(--info);"></i>
-                            <div class="theory-box" style="background: #E3F2FD; border-color: var(--info); font-size: 13px; margin-bottom: 15px;">
-                                <strong>Teoría de RR.SS.:</strong> El 31% de los consumidores utiliza medios sociales para buscar nuevos artículos (Revista Economía). Se recomiendan herramientas como Google Analytics para rastrear el tráfico.
-                            </div>
-                            
-                            <h3 style="color: var(--info); font-size: 20px;">Aplicación: ¿Qué hace Jennifer?</h3>
-                            <p style="font-size: 15px; margin-bottom: 10px;">Busca fuentes de proteína "limpias". Escribe en Google y Pinterest: <em>"Organic pre-washed bulk quinoa"</em>.</p>
-                            <p style="font-size: 15px;">Nuestra marca peruana aparece mediante <strong>Pinterest Ads</strong> y posicionamiento SEO, destacando el diferenciador: <em>"Triple-washed, stone-free Andean Quinoa"</em>.</p>
-                            
-                            <div class="touchpoints" style="background: #BBDEFB; color: #0D47A1;">
-                                <i class="fa-solid fa-mouse-pointer"></i> Puntos de Contacto: Pinterest Ads / Google Search
-                            </div>
-                        </div>
-                    </div>
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-laptop" style="font-size: 50px; margin-bottom: 15px; color: var(--info);"></i><br>
-                                            </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Customer Journey Map - Paso 3: Identificar Puntos de Contacto</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 5: FASE 2 - CONSIDERACIÓN
-             ========================================== -->
-        <div class="slide-container" id="slide5">
-            <h2 class="slide-title">Fase 2: Consideración <span>EVALUACIÓN Y SENTIMIENTO</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-tags" style="font-size: 50px; margin-bottom: 15px; color: #FBC02D;"></i><br>
-                                            </div>
-                    <div>
-                        <div class="journey-stage" style="border-top: 6px solid #FBC02D;">
-                            <i class="fa-solid fa-scale-balanced journey-icon" style="color: #FBC02D;"></i>
-                            <div class="theory-box" style="background: #FFF9C4; border-color: #FBC02D; font-size: 13px; margin-bottom: 15px;">
-                                <strong>Teoría de RR.SS.:</strong> El 56% de los consumidores sigue marcas para ver productos. Se sugiere usar "Brandwatch" para analizar el sentimiento y opiniones antes de que compren.
-                            </div>
-
-                            <h3 style="color: #F57F17; font-size: 20px;">Aplicación: La Evaluación Analítica</h3>
-                            <p style="font-size: 15px; margin-bottom: 10px;">Jennifer compara nuestro empaque en la tienda online. Dado que la quinua cruda es un <em>commodity</em> visual, la confianza se gana validando los <strong>"Nutrition Facts"</strong> y leyendo reviews en Twitter/Amazon.</p>
-                            <p style="font-size: 15px;">Verifica la presencia de sellos críticos: <strong>USDA Organic y Fair Trade</strong>.</p>
-                            
-                            <div class="touchpoints" style="background: #FFF59D; color: #E65100;">
-                                <i class="fa-solid fa-star"></i> Puntos de Contacto: Amazon Reviews / Sellos en Empaque / Twitter
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Customer Journey Map - Recopilación y Análisis de Datos</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 6: FASE 3 - COMPRA
-             ========================================== -->
-        <div class="slide-container" id="slide6">
-            <h2 class="slide-title">Fase 3: Decisión y Compra <span>CONVERSIÓN</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div>
-                        <div class="journey-stage" style="border-top: 6px solid var(--success);">
-                            <i class="fa-solid fa-cart-shopping journey-icon" style="color: var(--success);"></i>
-                            <div class="theory-box" style="background: #E8F5E9; border-color: var(--success); font-size: 13px; margin-bottom: 15px;">
-                                <strong>Teoría de Miro:</strong> Los puntos de contacto de compra deben ser lo más eficientes posibles para que el cliente no cambie de opinión. Un sitio web optimizado es vital.
-                            </div>
-
-                            <h3 style="color: var(--success); font-size: 20px;">Aplicación: La Conversión Final</h3>
-                            <p style="font-size: 15px; margin-bottom: 10px;">El precio de nuestra bolsa retail (1 lb) es de <strong>$9.99</strong>, muy superior a los granos convencionales asiáticos ($5.99).</p>
-                            <p style="font-size: 15px;">Sin embargo, la garantía visible de "Pre-washed" (ahorro de tiempo) en un checkout rápido y sin fricciones la convence. Jennifer adquiere 2 bolsas.</p>
-                            
-                            <div class="touchpoints" style="background: #C8E6C9; color: #1B5E20;">
-                                <i class="fa-solid fa-credit-card"></i> Puntos de Contacto: Pasarela de E-commerce / Confirmación
-                            </div>
-                        </div>
-                    </div>
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-credit-card" style="font-size: 50px; margin-bottom: 15px; color: var(--success);"></i><br>
-                                            </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Customer Journey Map - Optimización de Transacción</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 7: FASES 4 y 5 - RETENCIÓN Y PROMOCIÓN
-             ========================================== -->
-        <div class="slide-container" id="slide7">
-            <h2 class="slide-title">Fases 4 y 5: Experiencia y Promoción <span>ADVOCACY</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-camera" style="font-size: 50px; margin-bottom: 15px; color: var(--danger);"></i><br>
-                                            </div>
-                    <div>
-                        <div class="journey-stage" style="border-top: 6px solid var(--danger);">
-                            <i class="fa-solid fa-heart journey-icon" style="color: var(--danger);"></i>
-                            <div class="theory-box" style="background: #FFEBEE; border-color: var(--danger); font-size: 13px; margin-bottom: 15px;">
-                                <strong>Teoría (Revista Economía):</strong> En la fase de Promoción, el cliente se convierte en defensor (advocate) de la marca y la recomienda generando User Generated Content (UGC).
-                            </div>
-
-                            <h3 style="color: var(--danger); font-size: 20px;">Aplicación: El Momento de la Verdad</h3>
-                            <p style="font-size: 15px; margin-bottom: 10px;">Jennifer cocina el grano. Efectivamente, la selección óptica en Perú garantizó cero piedras y el proceso eliminó la saponina (cero amargor).</p>
-                            <p style="font-size: 15px;">Satisfecha, arma su "Quinoa Bowl", le toma una foto y la sube a Instagram <strong>etiquetando a nuestra marca</strong>, atrayendo a nuevas "Jennifers".</p>
-                            
-                            <div class="touchpoints" style="background: #FFCDD2; color: #B71C1C;">
-                                <i class="fa-brands fa-instagram"></i> Puntos de Contacto: Uso del Producto / Instagram (UGC)
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Customer Journey Map - Experiencia Post-Compra</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 8: FRICCIONES
-             ========================================== -->
-        <div class="slide-container" id="slide8">
-            <h2 class="slide-title">Análisis de Fricciones Críticas <span>IDENTIFICAR Y AJUSTAR</span></h2>
-            <div class="content-area">
-                <div class="theory-box" style="margin-bottom: 20px; text-align: center;">
-                    <strong>Teoría:</strong> "Revisar el mapa para identificar áreas de mejora. Busca puntos de fricción y realiza ajustes en tus procesos." (Paso 7 del mapeo).
-                </div>
+            <section id="kpi-mercado" class="scroll-mt-20">
+                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">2. KPI de Competencia: Índice de Valor Percibido (IVP)</h3>
+                <p class="text-gray-600 mb-6">Para identificar nuestro lugar en el mercado, calculamos el <strong>Índice de Valor Percibido (IVP)</strong>. <br><em>Fórmula: IVP = (Calidad de Empaque [1-10] * 0.4) + (Atributos Diferenciadores [1-10] * 0.6) / Precio por Libra</em>. <br>El cuadrante superior derecho representa el posicionamiento ideal (Alto Valor, Precio Competitivo).</p>
                 
-                <div class="three-column">
-                    <div class="info-card" style="border-top: 4px solid var(--danger);">
-                        <h3 style="color: var(--danger); font-size:18px;"><i class="fa-solid fa-eye-slash"></i> 1. Fricción Informativa</h3>
-                        <p style="font-size: 14px; margin-bottom: 5px;"><strong>Etapa: Consideración.</strong></p>
-                        <p style="font-size: 13px;">El anaquel digital está saturado. Si los sellos "Organic/Fair Trade" no son legibles en la miniatura de Amazon en 3 segundos, el cliente nos descarta por la competencia boliviana.</p>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <div class="chart-container">
+                        <canvas id="competitorChart"></canvas>
                     </div>
-                    <div class="info-card" style="border-top: 4px solid #EF6C00;">
-                        <h3 style="color: #EF6C00; font-size:18px;"><i class="fa-solid fa-wallet"></i> 2. Fricción de Precio</h3>
-                        <p style="font-size: 14px; margin-bottom: 5px;"><strong>Etapa: Compra.</strong></p>
-                        <p style="font-size: 13px;">El PVP de $9.99 choca con sustitutos baratos ($2.00). Si la ficha técnica no comunica fuertemente el valor de los 9 aminoácidos, el cliente abandona el carrito de compras.</p>
-                    </div>
-                    <div class="info-card" style="border-top: 4px solid var(--primary);">
-                        <h3 style="color: var(--primary); font-size:18px;"><i class="fa-solid fa-plant-wilt"></i> 3. Fricción Operativa (Grave)</h3>
-                        <p style="font-size: 14px; margin-bottom: 5px;"><strong>Etapa: Experiencia de Uso.</strong></p>
-                        <p style="font-size: 13px;">Si la planta en Perú falla y envía materia prima con trazas de saponina o piedras, la experiencia de cocina de Jennifer es terrible. El CLV cae a cero de inmediato.</p>
+                    <div class="mt-4 text-sm text-gray-500 text-center">
+                        *El tamaño de la burbuja representa la cuota de mercado estimada en retail digital de California.
                     </div>
                 </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Gestión de Riesgos del Customer Journey</div>
-        </div>
+            </section>
 
-        <!-- ==========================================
-             DIAPOSITIVA 9: INTRODUCCIÓN A KPIs (TEORÍA)
-             ========================================== -->
-        <div class="slide-container" id="slide9">
-            <h2 class="slide-title">Teoría de KPIs Financieros <span>¿POR QUÉ MEDIR CX?</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div>
-                        <div class="theory-box" style="margin-bottom: 20px;">
-                            <strong>Teoría del Impacto (Aberdeen Group):</strong> Gestionar correctamente el Customer Experience (CX) genera un <strong>aumento del 24.9% interanual en ingresos</strong> y una reducción del 16.8% en el ciclo de ventas. La buena experiencia hace rentable a la empresa.
-                        </div>
-                        <p style="font-size: 15px; margin-bottom: 15px;">Para medir el éxito de nuestro modelo Direct-to-Consumer (DTC) de exportación, calcularemos:</p>
+            <section id="viaje-cliente" class="scroll-mt-20">
+                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">3. Mapa de Viaje del Cliente (Customer Journey Map)</h3>
+                <p class="text-gray-600 mb-6">Análisis del consumidor objetivo (LOHAS - Lifestyles of Health and Sustainability en California). Haga clic en cada etapa para ver los puntos de contacto, frustraciones y oportunidades.</p>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 relative">
+                        <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 hidden md:block transform -translate-y-1/2"></div>
                         
-                        <ul style="font-size: 15px; line-height: 1.6; padding-left: 20px;">
-                            <li style="margin-bottom: 8px;"><strong style="color: var(--info);">CAC (Costo de Adquisición):</strong> Dinero invertido en marketing para conseguir un solo cliente nuevo.</li>
-                            <li style="margin-bottom: 8px;"><strong style="color: var(--success);">CLV (Customer Lifetime Value):</strong> Ganancia neta proyectada que deja un cliente a lo largo de su relación comercial (1 año).</li>
-                            <li><strong style="color: var(--accent);">ROI (Retorno de Inversión):</strong> Rentabilidad porcentual de la campaña inicial (¿Se ganó o se perdió plata?).</li>
-                        </ul>
+                        <button onclick="updateJourney(0)" class="journey-step active w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
+                            <span class="block text-2xl mb-1">&#x1F50D;</span>
+                            <span class="font-bold text-sm block">1. Descubrimiento</span>
+                        </button>
+                        <button onclick="updateJourney(1)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
+                            <span class="block text-2xl mb-1">&#x1F914;</span>
+                            <span class="font-bold text-sm block">2. Consideración</span>
+                        </button>
+                        <button onclick="updateJourney(2)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
+                            <span class="block text-2xl mb-1">&#x1F6D2;</span>
+                            <span class="font-bold text-sm block">3. Compra</span>
+                        </button>
+                        <button onclick="updateJourney(3)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center mb-4 md:mb-0 cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
+                            <span class="block text-2xl mb-1">&#x1F373;</span>
+                            <span class="font-bold text-sm block">4. Uso / Consumo</span>
+                        </button>
+                        <button onclick="updateJourney(4)" class="journey-step w-full md:w-1/6 bg-gray-100 p-3 rounded-xl text-center cursor-pointer border-2 border-transparent hover:border-brand-primary z-10">
+                            <span class="block text-2xl mb-1">&#x1F49A;</span>
+                            <span class="font-bold text-sm block">5. Retención</span>
+                        </button>
                     </div>
-                    <div class="img-placeholder">
-                        <i class="fa-solid fa-chart-pie" style="font-size: 50px; margin-bottom: 15px; color: var(--primary);"></i><br>
-                                            </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Fundamentos de Analítica Comercial e Impacto CX</div>
-        </div>
 
-        <!-- ==========================================
-             DIAPOSITIVA 10: ESCENARIO BASE
-             ========================================== -->
-        <div class="slide-container" id="slide10">
-            <h2 class="slide-title">El Escenario Comercial <span>SUPUESTOS ADEX 2026</span></h2>
-            <div class="content-area">
-                <div class="two-column">
-                    <div>
-                        <div class="info-card" style="border-left: 6px solid var(--primary); margin-bottom: 20px;">
-                            <h3 style="color: var(--primary); font-size: 18px;">Costos de Marketing (Mes 1)</h3>
-                            <ul class="fa-ul" style="font-size: 15px; line-height: 1.8;">
-                                <li><span class="fa-li"><i class="fa-solid fa-laptop" style="color: #999;"></i></span>Desarrollo E-commerce: <strong>$1,500</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-ad" style="color: #999;"></i></span>Pauta (Amazon/Pinterest Ads): <strong>$500</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-handshake" style="color: #999;"></i></span>Trade Mkt (Muestras): <strong>$300</strong></li>
-                            </ul>
-                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #CCC; font-size: 18px; font-weight: bold; text-align: right; color: var(--danger);">
-                                INVERSIÓN TOTAL: $2,300
+                    <div id="journey-content" class="bg-brand-light p-6 rounded-lg border-l-4 border-brand-primary min-h-[200px] transition-opacity duration-300">
+                        <h4 class="text-xl font-bold text-brand-dark mb-2" id="jc-title">1. Descubrimiento</h4>
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div>
+                                <h5 class="font-bold text-brand-primary mb-1">&#x1F4F1; Puntos de Contacto</h5>
+                                <p class="text-sm text-gray-700" id="jc-touchpoints">Búsqueda en Google ("organic quinoa protein"), Anuncios en Instagram (Influencers fitness), Amazon Search.</p>
                             </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="info-card" style="border-left: 6px solid var(--success);">
-                            <h3 style="color: var(--success); font-size: 18px;">Métricas de Producto y Demanda</h3>
-                            <ul class="fa-ul" style="font-size: 15px; line-height: 1.8;">
-                                <li><span class="fa-li"><i class="fa-solid fa-tag" style="color: #999;"></i></span>Precio Venta (Bolsa 1lb): <strong>$9.99</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-piggy-bank" style="color: #999;"></i></span>Margen Neto ADEX: <strong>30% ($3.00/bolsa)</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-users" style="color: #999;"></i></span>Nuevos clientes captados: <strong>500 clientes</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-basket-shopping" style="color: #999;"></i></span>Frecuencia de compra: <strong>2 bolsas / mes</strong></li>
-                                <li><span class="fa-li"><i class="fa-solid fa-calendar" style="color: #999;"></i></span>Retención proyectada: <strong>1 Año (12 meses)</strong></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Variables Aterrizadas y Lógicas</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 11: CÁLCULO CAC
-             ========================================== -->
-        <div class="slide-container" id="slide11">
-            <h2 class="slide-title">Indicador 1: CAC <span>CÁLCULO EDUCATIVO</span></h2>
-            <div class="content-area" style="align-items: center;">
-                <div style="background: var(--bg-card); border: 2px solid var(--info); border-radius: 15px; padding: 40px; width: 80%; text-align: center;">
-                    <h3 style="color: var(--info); font-size: 26px; margin-bottom: 20px;">Costo de Adquisición de Clientes</h3>
-                    
-                    <div style="background: #E3F2FD; display: inline-block; padding: 12px 25px; border-radius: 10px; font-family: 'Azeret Mono'; font-size: 16px; margin-bottom: 30px;">
-                        CAC = Inversión Total / Clientes Nuevos
-                    </div>
-
-                    <div style="display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: bold; color: var(--primary);">
-                        <div style="text-align: center;">$2,300<br><span style="font-size: 13px; font-weight: normal; color: #777;">Inversión Mkt</span></div>
-                        <div style="margin: 0 30px; color: #CCC;">÷</div>
-                        <div style="text-align: center;">500<br><span style="font-size: 13px; font-weight: normal; color: #777;">Clientes Nuevos</span></div>
-                        <div style="margin: 0 30px; color: #CCC;">=</div>
-                        <div style="color: var(--info); font-size: 45px;">$4.60</div>
-                    </div>
-
-                    <p style="margin-top: 30px; font-size: 15px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <strong>Lectura Teórica:</strong> Invertimos $4.60 para que Jennifer realice su primera compra. Al ganar solo $3.00 netos por bolsa, en la primera transacción tenemos saldo negativo. La clave de la rentabilidad es la <strong>retención (fidelización en el CJM)</strong>.
-                    </p>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Aplicación Práctica de KPI 1</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 12: CÁLCULO CLV
-             ========================================== -->
-        <div class="slide-container" id="slide12">
-            <h2 class="slide-title">Indicador 2: CLV <span>CÁLCULO EDUCATIVO</span></h2>
-            <div class="content-area" style="align-items: center;">
-                <div style="background: var(--bg-card); border: 2px solid var(--success); border-radius: 15px; padding: 40px; width: 80%; text-align: center;">
-                    <h3 style="color: var(--success); font-size: 26px; margin-bottom: 20px;">Customer Lifetime Value (Proyección 1 Año)</h3>
-                    
-                    <div style="background: #E8F5E9; display: inline-block; padding: 12px 25px; border-radius: 10px; font-family: 'Azeret Mono'; font-size: 16px; margin-bottom: 20px;">
-                        CLV = (Gasto Bruto Anual) x Margen Neto %
-                    </div>
-
-                    <div style="text-align: left; margin: 0 auto 20px auto; width: 70%; font-size: 15px;">
-                        <i class="fa-solid fa-check" style="color: var(--success);"></i> <strong>Paso 1:</strong> 2 bolsas/mes x 12 meses = 24 bolsas al año.<br>
-                        <i class="fa-solid fa-check" style="color: var(--success);"></i> <strong>Paso 2:</strong> 24 bolsas x $9.99 = $239.76 facturados por cliente.
-                    </div>
-
-                    <div style="display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: bold; color: var(--primary);">
-                        <div style="text-align: center;">$239.76<br><span style="font-size: 13px; font-weight: normal; color: #777;">Gasto del cliente</span></div>
-                        <div style="margin: 0 30px; color: #CCC;">x</div>
-                        <div style="text-align: center;">30%<br><span style="font-size: 13px; font-weight: normal; color: #777;">Margen Utilidad</span></div>
-                        <div style="margin: 0 30px; color: #CCC;">=</div>
-                        <div style="color: var(--success); font-size: 45px;">$71.93</div>
-                    </div>
-
-                    <p style="margin-top: 20px; font-size: 15px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <strong>Lectura Teórica:</strong> Gracias a una excelente experiencia post-compra (Cero fricciones), la lealtad de Jennifer le dejará a la empresa <strong>$71.93 de ganancia pura</strong> en el transcurso de un año.
-                    </p>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Aplicación Práctica de KPI 2</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 13: CÁLCULO ROI
-             ========================================== -->
-        <div class="slide-container" id="slide13">
-            <h2 class="slide-title">Indicador 3: ROI <span>CÁLCULO EDUCATIVO (MES 1)</span></h2>
-            <div class="content-area" style="align-items: center;">
-                <div style="background: var(--bg-card); border: 2px solid var(--accent); border-radius: 15px; padding: 40px; width: 80%; text-align: center;">
-                    <h3 style="color: var(--accent); font-size: 26px; margin-bottom: 20px;">Retorno de Inversión (Campaña Inicial)</h3>
-                    
-                    <div style="background: #FFF8E7; display: inline-block; padding: 12px 25px; border-radius: 10px; font-family: 'Azeret Mono'; font-size: 16px; margin-bottom: 20px;">
-                        ROI = [(Ganancia Neta - Inversión) / Inversión] x 100
-                    </div>
-
-                    <div style="text-align: left; margin: 0 auto 20px auto; width: 80%; font-size: 15px;">
-                        <strong>Ganancia Neta Mes 1:</strong> 500 clientes x 2 bolsas = 1000 bolsas. <br>
-                        1000 bolsas x $3.00 utilidad = <strong>$3,000.00 de Beneficio.</strong>
-                    </div>
-
-                    <div style="display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; color: var(--primary);">
-                        <div style="text-align: center;">[($3,000 - $2,300) / $2,300] * 100</div>
-                        <div style="margin: 0 30px; color: #CCC;">=</div>
-                        <div style="color: var(--accent); font-size: 45px;">30.43%</div>
-                    </div>
-
-                    <p style="margin-top: 20px; font-size: 15px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <strong>Lectura Teórica:</strong> Un ROI del 30.43% significa que la empresa recuperó la totalidad de los $2,300 invertidos en publicidad y desarrollo web, y adicionalmente <strong>ganó 30 centavos de dólar extra por cada dólar invertido</strong> durante el primer mes de operaciones.
-                    </p>
-                </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Aplicación Práctica de KPI 3</div>
-        </div>
-
-        <!-- ==========================================
-             DIAPOSITIVA 14: SIMULADOR & CONCLUSIÓN
-             ========================================== -->
-        <div class="slide-container" id="slide14">
-            <h2 class="slide-title">Simulador Interactivo <span>ANÁLISIS DE RENTABILIDAD CX</span></h2>
-            <div class="content-area">
-                <div class="sim-grid">
-                    
-                    <!-- Panel Izquierdo: Inputs -->
-                    <div class="sim-panel">
-                        <h3 style="color: var(--primary);"><i class="fa-solid fa-sliders"></i> Ingresa tus Datos</h3>
-                        <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Modifica los valores para entender el impacto de la teoría en las finanzas reales.</p>
-                        
-                        <div class="input-group">
-                            <label>Inversión Total Mkt ($)</label>
-                            <input type="number" id="sim_inv" value="2300" step="100" oninput="calcularSimulador()">
-                        </div>
-                        <div class="input-group">
-                            <label>Nuevos Clientes</label>
-                            <input type="number" id="sim_cli" value="500" oninput="calcularSimulador()">
-                        </div>
-                        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-                        <div class="input-group">
-                            <label>Precio Venta (PVP $)</label>
-                            <input type="number" id="sim_pvp" value="9.99" step="0.50" oninput="calcularSimulador()">
-                        </div>
-                        <div class="input-group">
-                            <label>Margen Neto (%)</label>
-                            <input type="number" id="sim_mar" value="30" oninput="calcularSimulador()">
-                        </div>
-                        <div class="input-group">
-                            <label>Frecuencia x Mes</label>
-                            <input type="number" id="sim_freq" value="2" oninput="calcularSimulador()">
-                        </div>
-                    </div>
-
-                    <!-- Panel Derecho: Resultados y Educación -->
-                    <div class="sim-panel" style="background: var(--bg-card); border: 2px solid #E0E0E0;">
-                        <h3 style="color: var(--primary);"><i class="fa-solid fa-chart-line"></i> Dashboard en Tiempo Real</h3>
-                        
-                        <div class="kpi-board">
-                            <div class="kpi-box blue">
-                                <div class="kpi-title">CAC</div>
-                                <div class="kpi-value" id="out_cac">$4.60</div>
+                            <div>
+                                <h5 class="font-bold text-red-600 mb-1">&#x26A0;&#xFE0F; Puntos de Dolor</h5>
+                                <p class="text-sm text-gray-700" id="jc-painpoints">Exceso de opciones, dificultad para saber si realmente es un producto sostenible o solo marketing verde.</p>
                             </div>
-                            <div class="kpi-box green">
-                                <div class="kpi-title">CLV (1 Año)</div>
-                                <div class="kpi-value" id="out_clv">$71.93</div>
-                            </div>
-                            <div class="kpi-box gold">
-                                <div class="kpi-title">ROI Mes 1</div>
-                                <div class="kpi-value" id="out_roi">30.4%</div>
-                            </div>
-                        </div>
-
-                        <div style="text-align: center; margin-bottom: 15px;">
-                            <span style="font-size: 14px; font-weight: bold; color: #555;">RATIO LTV : CAC = </span>
-                            <span id="out_ratio" style="font-size: 26px; font-weight: bold; color: var(--success);">15.6 : 1</span>
-                        </div>
-
-                        <!-- Caja Educativa Dinámica -->
-                        <div class="edu-panel" id="edu_box">
-                            <div class="edu-icon"><i class="fa-solid fa-lightbulb"></i></div>
-                            <div class="edu-text">
-                                <h4 id="edu_title">Conclusión Estratégica Teórica: Negocio Saludable</h4>
-                                <p id="edu_desc" style="font-size: 13px;">En la teoría de Startups, un ratio <strong>mayor a 3:1</strong> es ideal. Nuestro cliente deja <span class="highlight">15 veces más ganancia</span> de lo que costó adquirirlo. <strong>Recomendación:</strong> Escalar agresivamente el presupuesto en Ads gracias al éxito de la experiencia de cliente (CJM).</p>
+                            <div>
+                                <h5 class="font-bold text-brand-accent mb-1">&#x1F4A1; Oportunidad (Nuestra)</h5>
+                                <p class="text-sm text-gray-700" id="jc-opportunities">SEO enfocado en "Directo de Perú" y "Trazabilidad". Ads mostrando a los agricultores andinos.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="adex-logo">ADEX ESCUELA</div>
-            <div class="footer-text">Herramienta Interactiva HTML / JS</div>
+            </section>
+
+            <section id="finanzas" class="scroll-mt-20">
+                <h3 class="text-2xl font-serif font-bold text-brand-dark mb-2">4. KPIs Financieros y Proyecciones</h3>
+                <p class="text-gray-600 mb-6">Métricas unitarias calculadas para la estrategia de penetración directa al consumidor (D2C) y Amazon FBA en el primer año operativo.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-sage flex flex-col items-center text-center">
+                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Costo Adquisición Cliente (CAC)</span>
+                        <span class="text-4xl font-mono font-bold text-brand-dark">$14.50</span>
+                        <span class="text-xs text-gray-400 mt-2">Gasto Ads / Nuevos Clientes</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-primary flex flex-col items-center text-center">
+                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Customer Lifetime Value (CLV)</span>
+                        <span class="text-4xl font-mono font-bold text-brand-dark">$68.00</span>
+                        <span class="text-xs text-gray-400 mt-2">Valor proyectado a 2 años (compras recurrentes)</span>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-brand-accent flex flex-col items-center text-center">
+                        <span class="text-sm text-gray-500 font-bold uppercase tracking-wide mb-2">Retorno de Inversión (ROI)</span>
+                        <span class="text-4xl font-mono font-bold text-brand-dark">125%</span>
+                        <span class="text-xs text-gray-400 mt-2">Proyección Fin Año 1</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h4 class="text-lg font-bold text-brand-dark mb-4 text-center">Relación CLV vs CAC (Ratio Óptimo > 3:1)</h4>
+                    <div class="chart-container">
+                        <canvas id="financialChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-600 mt-4">Nuestro ratio proyectado de <strong>4.6x</strong> indica un modelo de crecimiento sostenible en canales digitales.</p>
+                </div>
+            </section>
+
+            <section id="referencias" class="scroll-mt-20 border-t border-gray-300 pt-8 pb-12">
+                <h3 class="text-xl font-serif font-bold text-brand-dark mb-4">5. Fuentes Online y Referencias Bibliográficas (Norma APA)</h3>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <ul class="list-none space-y-4 text-sm text-gray-700">
+                        <li class="pl-4 border-l-2 border-brand-sage">
+                            Amazon.com. (2026). <em>Categoría de Granos Orgánicos y Quinua: Los más vendidos</em>. Recuperado el 15 de marzo de 2026, de <a href="#" class="text-brand-primary underline break-all">https://www.amazon.com/Best-Sellers-Quinoa/zgbs/grocery/16322211</a>
+                        </li>
+                        <li class="pl-4 border-l-2 border-brand-sage">
+                            Programa de las Naciones Unidas para el Desarrollo. (2021). <em>Blockchain for Agri-Food Traceability: Implementing technology in sustainable supply chains</em>. Recuperado del archivo del PNUD.
+                        </li>
+                        <li class="pl-4 border-l-2 border-brand-sage">
+                            Qubit Capital. (2024). <em>LTV:CAC Benchmarks for eCommerce: Understanding optimal ratios</em>. Recuperado de documentación de capital de riesgo para startups D2C.
+                        </li>
+                        <li class="pl-4 border-l-2 border-brand-sage">
+                            The Packer. (2025). <em>Fresh produce anchoring 2026 consumer wellness movement</em>. Recuperado del reporte sobre tendencias de compra en supermercados.
+                        </li>
+                        <li class="pl-4 border-l-2 border-brand-sage">
+                            Whole Foods Market. (2025). <em>365 by Whole Foods Market Product Catalog</em>. Recuperado el 12 de marzo de 2026, de <a href="#" class="text-brand-primary underline break-all">https://www.wholefoodsmarket.com/products/brands/365-by-whole-foods-market</a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
         </div>
+    </main>
 
-        <!-- --- CONTROLES DE NAVEGACIÓN --- -->
-        <div class="nav-controls">
-            <button id="btnInicio" class="btn-nav" onclick="irInicio()">
-                <i class="fa-solid fa-house"></i> Inicio
-            </button>
-            <button id="btnSiguiente" class="btn-nav" onclick="siguienteSlide()">
-                Siguiente <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        </div>
-
-    </div>
-
-    <!-- ==========================================
-         SCRIPT DE NAVEGACIÓN Y SIMULADOR
-         ========================================== -->
     <script>
-        // Lógica de Navegación de Diapositivas
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide-container');
-        const btnInicio = document.getElementById('btnInicio');
-        const btnSiguiente = document.getElementById('btnSiguiente');
+        // Mobile Menu Logic
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
 
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                if (i === index) {
-                    slide.classList.add('active');
+        const mobileLinks = document.querySelectorAll('#mobile-menu a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // Data for Competitor Bubble Chart
+        // X = Price, Y = IVP (Value Index calculated), r = Market Share relative
+        const competitorData = {
+            datasets: [
+                {
+                    label: 'Ancient Harvest',
+                    data: [{x: 6.99, y: 1.15, r: 15}],
+                    backgroundColor: 'rgba(156, 163, 175, 0.6)',
+                    borderColor: 'rgb(156, 163, 175)'
+                },
+                {
+                    label: 'Bob\'s Red Mill',
+                    data: [{x: 7.49, y: 1.20, r: 25}],
+                    backgroundColor: 'rgba(107, 114, 128, 0.6)',
+                    borderColor: 'rgb(107, 114, 128)'
+                },
+                {
+                    label: 'Trader Joe\'s',
+                    data: [{x: 4.49, y: 1.35, r: 20}],
+                    backgroundColor: 'rgba(75, 85, 99, 0.6)',
+                    borderColor: 'rgb(75, 85, 99)'
+                },
+                {
+                    label: 'Whole Foods 365',
+                    data: [{x: 4.99, y: 1.40, r: 22}],
+                    backgroundColor: 'rgba(55, 65, 81, 0.6)',
+                    borderColor: 'rgb(55, 65, 81)'
+                },
+                {
+                    label: 'Alter Eco',
+                    data: [{x: 8.99, y: 0.95, r: 10}],
+                    backgroundColor: 'rgba(163, 177, 138, 0.8)',
+                    borderColor: 'rgb(163, 177, 138)'
+                },
+                {
+                    label: 'Andean Pure Grains (Nosotros)',
+                    data: [{x: 6.50, y: 1.45, r: 12}], // High value, competitive price
+                    backgroundColor: 'rgba(218, 138, 103, 0.9)', // Accent color
+                    borderColor: 'rgb(218, 138, 103)'
+                }
+            ]
+        };
+
+        const ctxComp = document.getElementById('competitorChart').getContext('2d');
+        new Chart(ctxComp, {
+            type: 'bubble',
+            data: competitorData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': Precio $' + context.raw.x + ' | Valor: ' + context.raw.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Precio Promedio por Libra (USD) - Menor es mejor hacia la izq.', font: {weight: 'bold'} },
+                        reverse: true, // Lower price is better, so it's on the right of the plot theoretically, but usually lower X is left. Let's keep normal but note it.
+                        min: 3, max: 10
+                    },
+                    y: {
+                        title: { display: true, text: 'Índice de Valor Percibido (IVP)', font: {weight: 'bold'} },
+                        min: 0.8, max: 1.6
+                    }
+                }
+            }
+        });
+
+        // Data for Financial Bar Chart
+        const ctxFin = document.getElementById('financialChart').getContext('2d');
+        new Chart(ctxFin, {
+            type: 'bar',
+            data: {
+                labels: ['Métricas D2C (E-commerce)', 'Métricas Amazon FBA', 'Promedio Industria'],
+                datasets: [
+                    {
+                        label: 'CAC (Costo Adquisición)',
+                        data: [12.50, 16.50, 22.00],
+                        backgroundColor: 'rgba(163, 177, 138, 0.8)', // Sage
+                    },
+                    {
+                        label: 'CLV (Valor de Vida)',
+                        data: [75.00, 61.00, 50.00],
+                        backgroundColor: 'rgba(88, 129, 87, 0.9)', // Primary
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.raw.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Valor (USD)' }
+                    }
+                }
+            }
+        });
+
+        // Customer Journey Logic
+        const journeyData = [
+            {
+                title: "1. Descubrimiento",
+                touchpoints: "Búsqueda en Google ('organic quinoa protein'), Anuncios en Instagram (Influencers fitness), Navegación en Amazon Categoría Saludable.",
+                painpoints: "Exceso de opciones, dificultad para saber si realmente es un producto orgánico sostenible o solo marketing verde (greenwashing).",
+                opportunities: "SEO enfocado en 'Directo de Perú' y 'Trazabilidad'. Ads mostrando a los agricultores andinos y certificaciones reales."
+            },
+            {
+                title: "2. Consideración",
+                touchpoints: "Lectura de reseñas en Amazon, revisión de tabla nutricional en web, comparación de precios en Whole Foods vs online.",
+                painpoints: "Confusión sobre la diferencia entre quinua blanca y tricolor. Preocupación por el residuo de saponina (sabor amargo).",
+                opportunities: "Página de producto muy clara destacando 'Pre-Lavada / Libre de Saponina'. Infografía comparando valores proteicos."
+            },
+            {
+                title: "3. Compra",
+                touchpoints: "Carrito de Amazon (1-Click Buy), Checkout en web propia D2C, Compra física en retail impulsiva.",
+                painpoints: "Costos de envío altos en web propia. Fricción si la pasarela de pago no es conocida (Apple Pay / PayPal requeridos).",
+                opportunities: "Ofrecer envío gratis en compras mayores a $30. Integrar 'Subscribe & Save' desde el primer momento."
+            },
+            {
+                title: "4. Uso / Consumo",
+                touchpoints: "Apertura del empaque (Unboxing), cocción del producto, consumo familiar.",
+                painpoints: "Empaque difícil de volver a cerrar (pierde frescura). La quinua queda pastosa si no hay instrucciones claras de agua/tiempo.",
+                opportunities: "Empaque con zipper de alta calidad. Incluir un código QR en el empaque que lleve a un video de 30 segundos de 'Cómo cocinarla perfecto'."
+            },
+            {
+                title: "5. Retención",
+                touchpoints: "Email marketing (recetas nuevas), Notificación de re-stock, Programa de lealtad.",
+                painpoints: "Olvido de recompra, aburrimiento de comerla de la misma forma, abandono si el precio sube sin justificación.",
+                opportunities: "Emails mensuales con recetas innovadoras. Descuento del 15% automático en el modelo de suscripción mensual."
+            }
+        ];
+
+        function updateJourney(index) {
+            // Update buttons
+            const buttons = document.querySelectorAll('.journey-step');
+            buttons.forEach((btn, i) => {
+                if(i === index) {
+                    btn.classList.add('active');
                 } else {
-                    slide.classList.remove('active');
+                    btn.classList.remove('active');
                 }
             });
 
-            // Control de visibilidad del botón "Inicio"
-            if (index === 0) {
-                btnInicio.style.display = 'none';
-            } else {
-                btnInicio.style.display = 'inline-flex';
-            }
-
-            // Control de visibilidad del botón "Siguiente"
-            if (index === slides.length - 1) {
-                btnSiguiente.style.display = 'none';
-            } else {
-                btnSiguiente.style.display = 'inline-flex';
-            }
-        }
-
-        function siguienteSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
-            }
-        }
-
-        function irInicio() {
-            currentSlide = 0;
-            showSlide(currentSlide);
-        }
-
-        // Lógica del Simulador Interactivo
-        function calcularSimulador() {
-            // Obtener valores
-            let invTotal = parseFloat(document.getElementById('sim_inv').value) || 0;
-            let clientes = parseFloat(document.getElementById('sim_cli').value) || 1; // Prevenir Div/0
-            let pvp = parseFloat(document.getElementById('sim_pvp').value) || 0;
-            let margen = parseFloat(document.getElementById('sim_mar').value) / 100 || 0;
-            let freqMensual = parseFloat(document.getElementById('sim_freq').value) || 0;
-            let meses = 12; // Fijo 1 año
-
-            // Cálculos Matemáticos
-            let cac = invTotal / clientes;
-            let gananciaNetaBolsa = pvp * margen;
-            let clv = (gananciaNetaBolsa * (freqMensual * meses));
+            // Update content with slight fade effect
+            const contentDiv = document.getElementById('journey-content');
+            contentDiv.style.opacity = '0';
             
-            let ingresosMes1 = clientes * freqMensual * gananciaNetaBolsa;
-            let roi = ((ingresosMes1 - invTotal) / invTotal) * 100;
-            let ratio = clv / cac;
-
-            // Pintar en Pantalla
-            document.getElementById('out_cac').innerText = '$' + cac.toFixed(2);
-            document.getElementById('out_clv').innerText = '$' + clv.toFixed(2);
-            document.getElementById('out_roi').innerText = roi.toFixed(1) + '%';
-            document.getElementById('out_ratio').innerText = ratio.toFixed(1) + ' : 1';
-
-            // Lógica Educativa
-            let elRatio = document.getElementById('out_ratio');
-            let eduBox = document.getElementById('edu_box');
-            let eduTitle = document.getElementById('edu_title');
-            let eduDesc = document.getElementById('edu_desc');
-
-            if (ratio >= 3 && roi > 0) {
-                elRatio.style.color = '#2E7D32';
-                eduBox.style.backgroundColor = '#E8F5E9';
-                eduBox.style.borderColor = '#A5D6A7';
-                eduTitle.style.color = '#2E7D32';
-                eduTitle.innerText = "Conclusión Estratégica Teórica: Negocio Escalable";
-                eduDesc.innerHTML = `Según la teoría financiera, un ratio 3:1 es saludable. Nuestro ratio es <span style="font-weight:bold; color:#2E7D32;">${ratio.toFixed(1)}:1</span>. La experiencia del cliente (CX) funciona y retiene al comprador. <strong>Decisión:</strong> Escalar inversión en Redes Sociales.`;
-            } 
-            else if (ratio >= 1 && ratio < 3) {
-                elRatio.style.color = '#EF6C00';
-                eduBox.style.backgroundColor = '#FFF3E0';
-                eduBox.style.borderColor = '#FFCC80';
-                eduTitle.style.color = '#EF6C00';
-                eduTitle.innerText = "Advertencia de Mercado: Margen Estrecho";
-                eduDesc.innerHTML = `Tu ratio es bajo (${ratio.toFixed(1)}:1). Estás gastando demasiado en captar clientes ($${cac.toFixed(2)}) a través del embudo de conversión (CJM). <strong>Recomendación Teórica:</strong> Optimizar la pauta publicitaria y revisar posibles fricciones.`;
-            } 
-            else {
-                elRatio.style.color = '#C62828';
-                eduBox.style.backgroundColor = '#FFEBEE';
-                eduBox.style.borderColor = '#EF9A9A';
-                eduTitle.style.color = '#C62828';
-                eduTitle.innerText = "¡Peligro Financiero! Revisar Customer Journey";
-                eduDesc.innerHTML = `Tu Costo de Adquisición (CAC $${cac.toFixed(2)}) supera al valor de vida del cliente (CLV $${clv.toFixed(2)}). Existen <strong>fricciones severas</strong> en la retención. <strong>Acción urgente:</strong> Detener pauta y analizar la fase de post-compra.`;
-            }
-
-            if (roi < 0 && ratio >= 1) {
-                eduDesc.innerHTML += `<br><br><span style="color:#C62828; font-weight:bold;">Nota sobre el Flujo de Caja:</span> El ROI negativo (${roi.toFixed(1)}%) en el mes 1 advierte que necesitas capital ("espalda financiera" como dicta ADEX) para soportar la fase de captación antes de ser rentable.`;
-            }
+            setTimeout(() => {
+                document.getElementById('jc-title').innerText = journeyData[index].title;
+                document.getElementById('jc-touchpoints').innerText = journeyData[index].touchpoints;
+                document.getElementById('jc-painpoints').innerText = journeyData[index].painpoints;
+                document.getElementById('jc-opportunities').innerText = journeyData[index].opportunities;
+                contentDiv.style.opacity = '1';
+            }, 150);
         }
-        
-        // Ejecutar al inicio
-        window.onload = () => {
-            showSlide(currentSlide);
-            calcularSimulador();
-        };
     </script>
-
 </body>
 </html>
