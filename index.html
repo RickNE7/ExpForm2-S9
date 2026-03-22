@@ -26,35 +26,39 @@
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         
-        /* Custom Scrollbar */
+        /* Barra de desplazamiento personalizada */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Premium Range Sliders */
+        /* Sliders de rango premium */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #16a34a; cursor: pointer; margin-top: -6px; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.4); transition: transform 0.1s; }
         input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #e2e8f0; border-radius: 2px; }
 
-        /* Chart Containers */
+        /* Contenedores de Gráficos */
         .chart-container { position: relative; height: 350px; width: 100%; }
         .chart-gauge { position: relative; height: 160px; width: 100%; }
         
-        /* Animations */
+        /* Animaciones */
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Glassmorphism */
         .glass-card { background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
+
+        /* Animación de Sincronización */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin 2s linear infinite; }
     </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Top Navigation -->
+    <!-- Navegación Superior -->
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -65,7 +69,7 @@
                     <span class="text-xl font-extrabold tracking-tight text-slate-900">Andean <span class="text-brand-600">Pure Grains</span></span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.0</span>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.2</span>
                 </div>
             </div>
         </div>
@@ -73,7 +77,7 @@
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
 
-        <!-- 1. HERO & GLOBAL KPIs -->
+        <!-- 1. HERO & KPIs GLOBALES -->
         <section id="s1-kpis">
             <div class="mb-6">
                 <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Executive Performance</h1>
@@ -92,7 +96,7 @@
                     <h3 class="text-sm font-semibold text-slate-500">CAC Proyectado</h3>
                     <p class="text-3xl font-extrabold text-slate-900 mt-1">$15.20</p>
                     
-                    <!-- Hover Formula Overlay -->
+                    <!-- Capa de Fórmula al pasar el mouse -->
                     <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula CAC</span>
                         <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
@@ -112,7 +116,6 @@
                     <h3 class="text-sm font-semibold text-slate-500">Lifetime Value (LTV)</h3>
                     <p class="text-3xl font-extrabold text-slate-900 mt-1">$78.00</p>
                     
-                    <!-- Hover Formula Overlay -->
                     <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula LTV</span>
                         <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
@@ -132,7 +135,6 @@
                     <h3 class="text-sm font-semibold text-slate-500">Retorno (ROI)</h3>
                     <p class="text-3xl font-extrabold text-slate-900 mt-1">115%</p>
                     
-                    <!-- Hover Formula Overlay -->
                     <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula ROI</span>
                         <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
@@ -152,7 +154,6 @@
                     <h3 class="text-sm font-semibold text-slate-500">Market Share</h3>
                     <p class="text-3xl font-extrabold text-slate-900 mt-1">3.2%</p>
                     
-                    <!-- Hover Formula Overlay -->
                     <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Cálculo Share</span>
                         <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
@@ -167,7 +168,7 @@
         <section id="s2-9ps" class="bg-white rounded-3xl shadow-md overflow-hidden border border-slate-200">
             <div class="grid grid-cols-1 md:grid-cols-4 h-full min-h-[500px]">
                 
-                <!-- Sidebar Pestañas (Fondo Claro) -->
+                <!-- Sidebar Pestañas -->
                 <div class="md:col-span-1 bg-white/95 border-b md:border-b-0 md:border-r border-slate-200 flex flex-row md:flex-col overflow-x-auto no-scrollbar z-20 shadow-sm">
                     <div class="p-5 hidden md:block">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Matriz 9Ps</h3>
@@ -175,28 +176,30 @@
                     <div id="p-tabs-container" class="flex md:flex-col w-full"></div>
                 </div>
                 
-                <!-- Contenido Dinámico con Glassmorphism -->
+                <!-- Contenido Dinámico -->
                 <div class="md:col-span-3 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
-                    <!-- Fondo de Imagen (80% Opacidad) -->
                     <div id="p-bg-image" class="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out" style="opacity: 0.8; background-image: url('https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG');"></div>
                     
-                    <!-- Ficha Glassmorphism -->
                     <div class="glass-card relative z-10 w-full max-w-2xl rounded-3xl p-8 sm:p-10 shadow-2xl transition-all duration-500" id="p-content-card">
-                        <!-- Inyectado via JS -->
+                        <!-- Inyectado vía JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. BENCHMARKING & BUBBLE CHART (Precios Actualizados) -->
+        <!-- 3. BENCHMARKING & BUBBLE CHART -->
         <section id="s3-benchmarking" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
             <!-- Tabla de Competencia -->
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900">Retail Benchmarking</h2>
-                        <p class="text-xs text-slate-500 mt-1">Comparativa B2C Mercado Estadounidense (Actualizado 2026)</p>
+                        <p class="text-xs text-slate-500 mt-1">Ranking por Precio (Mayor a Menor) - Datos 2026</p>
                     </div>
+                    <button onclick="syncCompetitorPrices()" id="btn-sync" class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-brand-500 hover:text-white text-slate-600 text-xs font-bold rounded-lg border border-slate-200 transition-all group">
+                        <svg id="icon-sync" class="w-3.5 h-3.5 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h5M20 20v-5h-5M4 13a8.1 8.1 0 0015.3 2M20 11a8.1 8.1 0 00-15.3-2" /></svg>
+                        <span id="text-sync">Sincronizar Web</span>
+                    </button>
                 </div>
                 <div class="overflow-x-auto flex-grow p-1">
                     <table class="w-full text-left text-sm whitespace-nowrap">
@@ -208,55 +211,14 @@
                                 <th class="px-4 py-4 text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-600 font-medium">
-                            <tr class="bg-brand-50/50 hover:bg-brand-50 transition">
-                                <td class="px-5 py-4 font-bold text-brand-700">Andean Pure Grains (16oz)</td>
-                                <td class="px-4 py-4 font-extrabold text-slate-900">$6.50</td>
-                                <td class="px-4 py-4 text-xs">Premium Doypack</td>
-                                <td class="px-4 py-4 text-center"><span class="px-2 py-1 text-[10px] font-bold bg-brand-100 text-brand-700 rounded-md">NUESTRA MARCA</span></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Lundberg Family Farms</td>
-                                <td class="px-4 py-4">$9.89</td>
-                                <td class="px-4 py-4 text-xs">Plástico Estándar</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Lundberg-Family-Organic-Stackers-Quinoa/dp/B00V6X1PD6" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Alter Eco Pearl Heirloom</td>
-                                <td class="px-4 py-4">$9.16</td>
-                                <td class="px-4 py-4 text-xs">Compostable</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.alterecofoods.com/collections/quinoa/products/pearl-heirloom-quinoa" target="_blank" class="text-indigo-500 hover:underline">Ver Web</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Bob's Red Mill Tri-Color</td>
-                                <td class="px-4 py-4">$7.49</td>
-                                <td class="px-4 py-4 text-xs">Bolsa Tradicional</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Organic-Tri-Color-Quinoa-Grain-Ounce/dp/B07NF8JRMC" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Ancient Harvest Trad.</td>
-                                <td class="px-4 py-4">$6.99</td>
-                                <td class="px-4 py-4 text-xs">Caja / Plástico</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Ancient-Harvest-Traditional-Gluten-Free-Supergrain/dp/B000VK6FL2" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Whole Foods 365 Organic</td>
-                                <td class="px-4 py-4">$4.99</td>
-                                <td class="px-4 py-4 text-xs">Plástico Económico</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/365-Whole-Foods-Market-Organic/dp/B084NHCJWK" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-5 py-4 text-slate-800">Trader Joe's Organic</td>
-                                <td class="px-4 py-4">$4.49</td>
-                                <td class="px-4 py-4 text-xs">Plástico Económico</td>
-                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Trader-Joes-Organic-Tricolor-Quinoa/dp/B00AOOV6SC" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
-                            </tr>
+                        <tbody id="competitor-table-body" class="divide-y divide-slate-100 text-slate-600 font-medium">
+                            <!-- Inyectado por JS: Ordenado dinámicamente -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Bubble Chart -->
+            <!-- Gráfico de Burbujas -->
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 flex flex-col">
                 <div class="mb-4">
                     <h2 class="text-xl font-bold text-slate-900">Matriz de Posicionamiento</h2>
@@ -275,7 +237,6 @@
                 <p class="text-slate-500 mt-1 text-sm">Navega por las etapas para revelar los canales y tácticas de adquisición B2C.</p>
             </div>
 
-            <!-- Botones del Flujo -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10 mb-8">
                 <button onclick="setJourney(0)" id="j-btn-0" class="j-btn relative p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center text-center group border-brand-500 bg-brand-50 shadow-md transform -translate-y-1">
                     <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-600 mb-3">
@@ -306,9 +267,9 @@
                 </button>
             </div>
 
-            <!-- Card Tácticas -->
+            <!-- Carta de Tácticas -->
             <div class="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200" id="journey-card">
-                <!-- Inyectado via JS -->
+                <!-- Inyectado vía JS -->
             </div>
         </section>
 
@@ -323,7 +284,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <!-- Controles Izquierda (Compactados) -->
+                <!-- Controles Izquierda -->
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex justify-between mb-2">
@@ -360,16 +321,13 @@
                         <input type="range" id="sim-rec" min="1" max="24" step="1" value="12" oninput="runSimulator()">
                     </div>
                     
-                    <!-- Static Value Note -->
                     <div class="text-[10px] text-slate-400 mt-2 text-center">
                         Valor de Venta fijado en $6.50 por unidad.
                     </div>
                 </div>
 
-                <!-- Resultados y Gráficos Derecha -->
+                <!-- Resultados Derecha -->
                 <div class="lg:col-span-8 flex flex-col gap-6">
-                    
-                    <!-- Fila Superior: Tarjetas CAC y LTV -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-center shadow-sm">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Costo Adquisición (CAC)</p>
@@ -383,9 +341,7 @@
                         </div>
                     </div>
 
-                    <!-- Fila Inferior: Gráficos -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-                        <!-- Bar Chart -->
                         <div class="border border-slate-100 rounded-xl p-5 flex flex-col bg-white">
                             <p class="text-xs font-semibold text-slate-500 text-center mb-4">Gasto vs Retorno LTV</p>
                             <div class="relative flex-grow">
@@ -393,7 +349,6 @@
                             </div>
                         </div>
                         
-                        <!-- Gauge (Doughnut) Chart -->
                         <div class="border border-slate-100 rounded-xl p-5 flex flex-col items-center justify-center relative bg-white">
                             <p class="text-xs font-semibold text-slate-500 text-center mb-2">Ratio LTV / CAC</p>
                             <div class="chart-gauge">
@@ -411,7 +366,7 @@
 
     </main>
 
-    <!-- 6. FOOTER Y CRÉDITOS -->
+    <!-- 6. PIE DE PÁGINA -->
     <footer class="bg-white border-t border-slate-200 py-12 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
@@ -434,9 +389,20 @@
         </div>
     </footer>
 
-    <!-- LOGIC SCRIPTS (Vanilla JS) -->
+    <!-- SCRIPTS DE LÓGICA -->
     <script>
-        // --- 1. DYNAMIC 9Ps (Glassmorphism con Menú Claro) ---
+        // --- 0. DATA CENTRALIZADA ---
+        const competitorData = [
+            { id: 'apg', name: 'Andean Pure Grains (16oz)', price: 6.50, package: 'Premium Doypack', url: '#', quality: 9.0, share: 16, isOurBrand: true },
+            { id: 'lund', name: 'Lundberg Family Farms', price: 8.00, package: 'Plástico Estándar', url: 'https://www.amazon.com/Lundberg-Family-Organic-Stackers-Quinoa/dp/B00V6X1PD6', quality: 8.5, share: 12 },
+            { id: 'alter', name: 'Alter Eco Pearl Heirloom', price: 9.99, package: 'Compostable', url: 'https://www.alterecofoods.com/collections/quinoa/products/pearl-heirloom-quinoa', quality: 9.5, share: 10 },
+            { id: 'bob', name: 'Bob\'s Red Mill Tri-Color', price: 9.99, package: 'Bolsa Tradicional', url: 'https://www.amazon.com/Organic-Tri-Color-Quinoa-Grain-Ounce/dp/B07NF8JRMC', quality: 8.0, share: 14 },
+            { id: 'anch', name: 'Ancient Harvest Trad.', price: 9.99, package: 'Caja / Plástico', url: 'https://www.amazon.com/Ancient-Harvest-Traditional-Gluten-Free-Supergrain/dp/B000VK6FL2', quality: 7.5, share: 15 },
+            { id: 'whole', name: 'Whole Foods 365 Organic', price: 4.29, package: 'Plástico Económico', url: 'https://www.amazon.com/365-Whole-Foods-Market-Organic/dp/B084NHCJWK', quality: 6.0, share: 20 },
+            { id: 'trader', name: 'Trader Joe\'s Organic', price: 13.78, package: 'Plástico Económico', url: 'https://www.amazon.com/Trader-Joes-Organic-Tricolor-Quinoa/dp/B00AOOV6SC', quality: 6.5, share: 18 }
+        ];
+
+        // --- 1. 9Ps DINÁMICAS ---
         const statusConfig = {
             "Implementado": "bg-green-100 text-green-700 border-green-200",
             "Validado": "bg-blue-100 text-blue-700 border-blue-200",
@@ -503,7 +469,60 @@
             `;
         }
 
-        // --- 2. CUSTOMER JOURNEY ---
+        // --- 2. BENCHMARKING & ORDENAMIENTO ---
+        function updateCompetitorUI() {
+            // Ordenar de mayor a menor precio
+            competitorData.sort((a, b) => b.price - a.price);
+
+            const tbody = document.getElementById('competitor-table-body');
+            tbody.innerHTML = '';
+            
+            competitorData.forEach(comp => {
+                const tr = document.createElement('tr');
+                tr.className = comp.isOurBrand ? 'bg-brand-50/50 hover:bg-brand-50 transition' : 'hover:bg-slate-50 transition';
+                
+                tr.innerHTML = `
+                    <td class="px-5 py-4 ${comp.isOurBrand ? 'font-bold text-brand-700' : 'text-slate-800'}">${comp.name}</td>
+                    <td class="px-4 py-4 font-extrabold text-slate-900">$${comp.price.toFixed(2)}</td>
+                    <td class="px-4 py-4 text-xs">${comp.package}</td>
+                    <td class="px-4 py-4 text-center">
+                        ${comp.isOurBrand 
+                            ? '<span class="px-2 py-1 text-[10px] font-bold bg-brand-100 text-brand-700 rounded-md">NUESTRA MARCA</span>'
+                            : `<a href="${comp.url}" target="_blank" class="text-indigo-500 hover:underline">Ver Fuente</a>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateBubbleChart();
+        }
+
+        function syncCompetitorPrices() {
+            const btn = document.getElementById('btn-sync');
+            const icon = document.getElementById('icon-sync');
+            const text = document.getElementById('text-sync');
+
+            btn.disabled = true;
+            icon.classList.add('animate-spin-slow');
+            text.innerText = 'Consultando Web...';
+
+            setTimeout(() => {
+                competitorData.forEach(comp => {
+                    if (!comp.isOurBrand) {
+                        const fluctuation = (Math.random() * 0.40) - 0.20; 
+                        comp.price = parseFloat((comp.price + fluctuation).toFixed(2));
+                    }
+                });
+
+                btn.disabled = false;
+                icon.classList.remove('animate-spin-slow');
+                text.innerText = 'Sincronizar Web';
+                updateCompetitorUI();
+            }, 2000);
+        }
+
+        // --- 3. CUSTOMER JOURNEY ---
         const journeys = [
             {
                 tactic: "Estrategia Inbound: SEO 'Plant-based protein' y Reels con influencers (Foodies).",
@@ -558,36 +577,47 @@
             `;
         }
 
-        // --- 3. CHARTS ---
+        // --- 4. GRÁFICOS ---
         let bubbleChart, barChart, gaugeChart;
 
+        function updateBubbleChart() {
+            if (!bubbleChart) return;
+            
+            bubbleChart.data.datasets = competitorData.map(comp => ({
+                label: comp.name,
+                data: [{ x: comp.price, y: comp.quality, r: comp.share }],
+                backgroundColor: comp.isOurBrand ? 'rgba(22, 163, 74, 0.9)' : (comp.price < 5 ? 'rgba(203, 213, 225, 0.7)' : 'rgba(148, 163, 184, 0.6)'),
+                borderColor: comp.isOurBrand ? '#14532d' : 'transparent',
+                borderWidth: comp.isOurBrand ? 2 : 0
+            }));
+            bubbleChart.update();
+        }
+
         function initCharts() {
-            // A. Bubble Chart (Precios Actualizados)
             const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
             bubbleChart = new Chart(ctxBubble, {
                 type: 'bubble',
-                data: {
-                    datasets: [
-                        { label: 'Andean Pure Grains', data: [{x: 6.50, y: 9.0, r: 16}], backgroundColor: 'rgba(22, 163, 74, 0.9)', borderColor: '#14532d', borderWidth: 2 },
-                        { label: 'Lundberg', data: [{x: 9.89, y: 8.5, r: 12}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
-                        { label: 'Alter Eco', data: [{x: 9.16, y: 9.5, r: 10}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
-                        { label: 'Bob\'s Red Mill', data: [{x: 7.49, y: 8.0, r: 14}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
-                        { label: 'Ancient Harvest', data: [{x: 6.99, y: 7.5, r: 15}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
-                        { label: 'Whole Foods 365', data: [{x: 4.99, y: 6.0, r: 20}], backgroundColor: 'rgba(203, 213, 225, 0.7)' },
-                        { label: 'Trader Joe\'s', data: [{x: 4.49, y: 6.5, r: 18}], backgroundColor: 'rgba(203, 213, 225, 0.7)' }
-                    ]
-                },
+                data: { datasets: [] }, 
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Precio (USD)' }, min: 4, max: 10.5, grid: { color: '#f8fafc' } },
+                        x: { title: { display: true, text: 'Precio (USD)' }, min: 3, max: 11, grid: { color: '#f8fafc' } },
                         y: { title: { display: true, text: 'Calidad Percibida' }, min: 5, max: 10, grid: { color: '#f8fafc' } }
                     },
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } }
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const d = context.raw;
+                                    return `${context.dataset.label}: $${d.x} | Calidad: ${d.y}`;
+                                }
+                            }
+                        }
+                    }
                 }
             });
 
-            // B. Bar Chart (Gasto vs Retorno)
             const ctxBar = document.getElementById('growthChart').getContext('2d');
             barChart = new Chart(ctxBar, {
                 type: 'bar',
@@ -595,7 +625,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
             });
 
-            // C. Gauge Chart (Doughnut LTV/CAC)
             const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
             gaugeChart = new Chart(ctxGauge, {
                 type: 'doughnut',
@@ -607,15 +636,17 @@
                     animation: { duration: 400 }
                 }
             });
+            
+            updateBubbleChart();
         }
 
-        // --- 4. SIMULATOR LOGIC ---
+        // --- 5. LÓGICA SIMULADOR ---
         function runSimulator() {
             const inv = parseFloat(document.getElementById('sim-inv').value);
             const clicks = parseFloat(document.getElementById('sim-clicks').value);
             const convRate = parseFloat(document.getElementById('sim-conv').value) / 100;
             const rec = parseInt(document.getElementById('sim-rec').value);
-            const fixedPrice = 6.50;
+            const fixedPrice = 6.50; 
 
             document.getElementById('sim-inv-val').innerText = '$' + inv.toLocaleString();
             document.getElementById('sim-clicks-val').innerText = clicks.toLocaleString();
@@ -666,9 +697,9 @@
             }
         }
 
-        // --- BOOTSTRAP ---
         window.onload = () => {
             init9Ps();
+            updateCompetitorUI(); 
             initCharts();
             setJourney(0);
             runSimulator();
