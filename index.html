@@ -3,279 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BI Dashboard | Andean Pure Grains</title>
+    <title>SaaS BI Dashboard | Andean Pure Grains</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; } /* slate-50 */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         
-        /* Ocultar scrollbars para diseño limpio */
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Estilos SaaS Premium para Sliders */
+        
+        /* Premium Range Sliders */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #059669; cursor: pointer; margin-top: -6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.1s; }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
-        
-        /* Contenedores de Gráficos Strictos */
-        .chart-container { position: relative; height: 320px; width: 100%; }
-        .chart-gauge { position: relative; height: 200px; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #16a34a; cursor: pointer; margin-top: -6px; box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.4); transition: all 0.2s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #e2e8f0; border-radius: 2px; }
 
-        /* Animaciones sutiles */
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tab Activa Pestañas Verticales */
-        .tab-active { background-color: #f1f5f9; border-left: 4px solid #059669; color: #0f172a; font-weight: 600; }
-        .tab-inactive { border-left: 4px solid transparent; color: #64748b; font-weight: 500; }
+        /* Chart Containers */
+        .chart-container { position: relative; height: 350px; width: 100%; }
+        .chart-gauge { position: relative; height: 160px; width: 100%; }
         
-        /* Journey Step Activo */
-        .journey-active { border-color: #059669; background-color: #ecfdf5; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1); transform: translateY(-2px); }
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Glassmorphism utility overrides */
+        .glass-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.6); }
     </style>
 </head>
-<body class="text-slate-900 antialiased min-h-screen flex flex-col">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Navbar Minimalista -->
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <!-- Top Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-sm">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold shadow-md">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-slate-800">Andean <span class="text-emerald-600">Growth BI</span></span>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">Andean <span class="text-brand-600">Pure Grains</span></span>
                 </div>
-                <div class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
-                    Panel Ejecutivo v3.0
+                <div class="flex items-center gap-4">
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v4.2</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-14">
 
-        <!-- A. HERO & GLOBAL KPIs (Tarjetas con Hover/Fórmulas) -->
+        <!-- 1. HERO & GLOBAL KPIs -->
         <section>
             <div class="mb-6">
-                <h1 class="text-2xl font-bold text-slate-900">Salud del Negocio</h1>
-                <p class="text-sm text-slate-500">Métricas clave proyectadas para la incursión en el mercado retail de EE.UU.</p>
+                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Executive Performance</h1>
+                <p class="text-slate-500 mt-1">Métricas de salud financiera proyectadas para el retail B2C en Estados Unidos.</p>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <!-- KPI 1: CAC -->
-                <div class="group relative bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- KPI: CAC -->
+                <div class="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-crosshair">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">Optimizado</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-100 px-2 py-1 rounded">Optimizar</span>
                     </div>
                     <h3 class="text-sm font-semibold text-slate-500">CAC Proyectado</h3>
-                    <p class="text-3xl font-bold text-slate-900 mt-1">$14.20</p>
+                    <p class="text-3xl font-extrabold text-slate-900 mt-1">$15.20</p>
                     
-                    <!-- Hover Tooltip/Fórmula -->
-                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA CAC</p>
-                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Inversión Total MKT<br><span class="text-slate-400">÷</span><br>Nuevos Clientes</p>
+                    <!-- Hover Formula Overlay -->
+                    <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula CAC</span>
+                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
+                            Total Gasto Marketing<br><span class="text-slate-500">÷</span><br>Nuevos Clientes
+                        </div>
                     </div>
                 </div>
 
-                <!-- KPI 2: LTV -->
-                <div class="group relative bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+                <!-- KPI: LTV -->
+                <div class="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-crosshair">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                        <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">High Value</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-700 bg-brand-100 px-2 py-1 rounded">Retención</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">LTV Estimado</h3>
-                    <p class="text-3xl font-bold text-slate-900 mt-1">$390.00</p>
+                    <h3 class="text-sm font-semibold text-slate-500">Lifetime Value (LTV)</h3>
+                    <p class="text-3xl font-extrabold text-slate-900 mt-1">$78.00</p>
                     
-                    <!-- Hover Tooltip/Fórmula -->
-                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA LTV</p>
-                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Valor Ticket ($6.50)<br><span class="text-slate-400">×</span><br>Recurrencia Vida (Meses)</p>
+                    <!-- Hover Formula Overlay -->
+                    <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula LTV</span>
+                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
+                            Ticket Promedio ($6.50)<br><span class="text-slate-500">×</span><br>Recurrencia (Meses)
+                        </div>
                     </div>
                 </div>
 
-                <!-- KPI 3: Market Share -->
-                <div class="group relative bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+                <!-- KPI: ROI -->
+                <div class="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-crosshair">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
-                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">Obj. Año 1</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2 py-1 rounded">Proyectado</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">Market Share (LA)</h3>
-                    <p class="text-3xl font-bold text-slate-900 mt-1">2.5%</p>
+                    <h3 class="text-sm font-semibold text-slate-500">Retorno (ROI)</h3>
+                    <p class="text-3xl font-extrabold text-slate-900 mt-1">115%</p>
                     
-                    <!-- Hover Tooltip/Fórmula -->
-                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA SHARE</p>
-                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">(Nuestras Ventas LA)<br><span class="text-slate-400">÷</span><br>(Ventas Totales LA) * 100</p>
+                    <!-- Hover Formula Overlay -->
+                    <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula ROI</span>
+                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
+                            (Ingreso Neto - Inversión)<br><span class="text-slate-500">÷</span><br>Inversión * 100
+                        </div>
                     </div>
                 </div>
 
-                <!-- KPI 4: ROAS -->
-                <div class="group relative bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden">
+                <!-- KPI: Market Share -->
+                <div class="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-crosshair">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path></svg>
                         </div>
-                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Eficiencia</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-1 rounded">Target LA</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">ROAS Publicitario</h3>
-                    <p class="text-3xl font-bold text-slate-900 mt-1">3.2x</p>
+                    <h3 class="text-sm font-semibold text-slate-500">Market Share</h3>
+                    <p class="text-3xl font-extrabold text-slate-900 mt-1">3.2%</p>
                     
-                    <!-- Hover Tooltip/Fórmula -->
-                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA ROAS</p>
-                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Ingresos por Ads<br><span class="text-slate-400">÷</span><br>Costo de Ads</p>
+                    <!-- Hover Formula Overlay -->
+                    <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Cálculo Share</span>
+                        <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
+                            Ventas APG<br><span class="text-slate-500">÷</span><br>Total Mercado L.A.
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- B. MAPA DEL CLIENTE (Interactivo) -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900">Customer Journey Map</h2>
-                    <p class="text-sm text-slate-500 mt-1">Haz clic en cada etapa para revelar la Card de Táctica.</p>
-                </div>
+        <!-- 2. CUSTOMER JOURNEY (Flujo Interactivo) -->
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-900">Customer Journey Map</h2>
+                <p class="text-slate-500 mt-1 text-sm">Navega por las etapas para revelar los canales y tácticas de adquisición B2C.</p>
             </div>
 
-            <!-- Flujo Visual -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-                <!-- Conciencia -->
-                <button onclick="updateJourney('conciencia')" id="btn-conciencia" class="journey-btn journey-active w-full md:w-1/4 p-4 rounded-xl border border-slate-200 transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-600 mb-3 transition-colors">
+            <!-- Botones del Flujo -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10 mb-8">
+                <button onclick="setJourney(0)" id="j-btn-0" class="j-btn relative p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center text-center group border-brand-500 bg-brand-50 shadow-md transform -translate-y-1">
+                    <div class="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-600 mb-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </div>
-                    <span class="font-bold text-slate-800">1. Conciencia</span>
-                    <span class="text-xs text-slate-500 mt-1">Descubrimiento</span>
+                    <span class="font-bold text-slate-900">1. Conciencia</span>
                 </button>
                 
-                <!-- Separador -->
-                <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
-
-                <!-- Consideración -->
-                <button onclick="updateJourney('consideracion')" id="btn-consideracion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 mb-3 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <button onclick="setJourney(1)" id="j-btn-1" class="j-btn relative p-5 rounded-2xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:text-indigo-500 mb-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <span class="font-bold text-slate-800">2. Consideración</span>
-                    <span class="text-xs text-slate-500 mt-1">Evaluación</span>
+                    <span class="font-bold text-slate-900">2. Consideración</span>
                 </button>
 
-                <!-- Separador -->
-                <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
-
-                <!-- Conversión -->
-                <button onclick="updateJourney('conversion')" id="btn-conversion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-amber-100 group-hover:text-amber-600 mb-3 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <button onclick="setJourney(2)" id="j-btn-2" class="j-btn relative p-5 rounded-2xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:text-amber-500 mb-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     </div>
-                    <span class="font-bold text-slate-800">3. Conversión</span>
-                    <span class="text-xs text-slate-500 mt-1">Compra</span>
+                    <span class="font-bold text-slate-900">3. Conversión</span>
                 </button>
 
-                <!-- Separador -->
-                <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
-
-                <!-- Fidelización -->
-                <button onclick="updateJourney('fidelizacion')" id="btn-fidelizacion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-rose-100 group-hover:text-rose-600 mb-3 transition-colors">
+                <button onclick="setJourney(3)" id="j-btn-3" class="j-btn relative p-5 rounded-2xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:text-rose-500 mb-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </div>
-                    <span class="font-bold text-slate-800">4. Fidelización</span>
-                    <span class="text-xs text-slate-500 mt-1">Recompra & NPS</span>
+                    <span class="font-bold text-slate-900">4. Fidelización</span>
                 </button>
             </div>
 
-            <!-- Card de Táctica Dinámica -->
-            <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 min-h-[160px]" id="journey-card">
-                <!-- Se inyecta por JS -->
+            <!-- Card Tácticas -->
+            <div class="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200" id="journey-card">
+                <!-- Inyectado via JS -->
             </div>
         </section>
 
-        <!-- C. 9Ps MARKETING MIX (Deep Navigation con Imágenes Dinámicas) -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="grid grid-cols-1 md:grid-cols-4">
-                <!-- Panel Pestañas -->
-                <div class="md:col-span-1 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto no-scrollbar z-20">
-                    <div class="p-4 hidden md:block border-b border-slate-200">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Matriz Táctica</h3>
+        <!-- 3. SISTEMA DINÁMICO DE LAS 9Ps (Glassmorphism & Backgrounds) -->
+        <section class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-4 h-full min-h-[500px]">
+                
+                <!-- Sidebar Pestañas (Fondo Claro) -->
+                <div class="md:col-span-1 bg-white/95 border-b md:border-b-0 md:border-r border-slate-200 flex flex-row md:flex-col overflow-x-auto no-scrollbar z-20 shadow-sm">
+                    <div class="p-5 hidden md:block">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Matriz 9Ps</h3>
                     </div>
-                    <!-- Generado por JS -->
-                    <div id="tabs-container" class="flex md:flex-col w-full"></div>
+                    <div id="p-tabs-container" class="flex md:flex-col w-full"></div>
                 </div>
                 
-                <!-- Contenido Pestaña (Fondo Dinámico) -->
-                <div class="md:col-span-3 relative min-h-[450px] overflow-hidden bg-slate-900" id="tab-content">
-                    <!-- Se inyecta por JS -->
+                <!-- Contenido Dinámico con Glassmorphism -->
+                <div class="md:col-span-3 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
+                    <!-- Fondo de Imagen (80% Opacidad) -->
+                    <div id="p-bg-image" class="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out" style="opacity: 0.8; background-image: url('https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG');"></div>
+                    
+                    <!-- Ficha Glassmorphism (bg-white/50 + backdrop-blur) -->
+                    <div class="glass-card relative z-10 w-full max-w-2xl rounded-3xl p-8 sm:p-10 shadow-2xl transition-all duration-500" id="p-content-card">
+                        <!-- Inyectado via JS -->
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- D. BENCHMARKING & BUBBLE CHART -->
+        <!-- 4. BENCHMARKING & BUBBLE CHART -->
         <section class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <!-- Tabla Responsiva -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
-                    <h2 class="text-lg font-bold text-slate-900">Retail Benchmarking (LA)</h2>
-                    <p class="text-xs text-slate-500 mt-1">Comparativa de precios B2C en USD (16oz)</p>
+            <!-- Tabla de Competencia -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Retail Benchmarking</h2>
+                        <p class="text-xs text-slate-500 mt-1">Comparativa B2C Mercado Estadounidense</p>
+                    </div>
                 </div>
-                <div class="overflow-x-auto flex-grow">
+                <div class="overflow-x-auto flex-grow p-1">
                     <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-white text-slate-400 font-semibold uppercase text-[10px] tracking-widest border-b border-slate-200">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold uppercase text-[10px] tracking-widest border-b border-slate-200">
                             <tr>
-                                <th class="px-6 py-4">Marca</th>
-                                <th class="px-6 py-4">Precio</th>
-                                <th class="px-6 py-4">Status</th>
+                                <th class="px-5 py-4">Marca & Variedad</th>
+                                <th class="px-4 py-4">Precio</th>
+                                <th class="px-4 py-4">Empaque</th>
+                                <th class="px-4 py-4 text-center">Acción</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-600">
-                            <tr class="bg-emerald-50/30 hover:bg-emerald-50 transition">
-                                <td class="px-6 py-4 font-bold text-emerald-700 flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div> Andean Pure Grains
-                                </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">$6.50</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded">NUESTRA MARCA</span></td>
+                        <tbody class="divide-y divide-slate-100 text-slate-600 font-medium">
+                            <tr class="bg-brand-50/50 hover:bg-brand-50 transition">
+                                <td class="px-5 py-4 font-bold text-brand-700">Andean Pure Grains (16oz)</td>
+                                <td class="px-4 py-4 font-extrabold text-slate-900">$6.50</td>
+                                <td class="px-4 py-4 text-xs">Premium Doypack</td>
+                                <td class="px-4 py-4 text-center"><span class="px-2 py-1 text-[10px] font-bold bg-brand-100 text-brand-700 rounded-md">NUESTRA MARCA</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Alter Eco</td>
-                                <td class="px-6 py-4">$8.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Premium</span></td>
+                                <td class="px-5 py-4 text-slate-800">Alter Eco Pearl Heirloom</td>
+                                <td class="px-4 py-4">$8.99</td>
+                                <td class="px-4 py-4 text-xs">Compostable</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.alterecofoods.com/collections/quinoa/products/pearl-heirloom-quinoa" target="_blank" class="text-indigo-500 hover:underline">Ver Web</a></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Lundberg</td>
-                                <td class="px-6 py-4">$7.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Medio</span></td>
+                                <td class="px-5 py-4 text-slate-800">Lundberg Family Farms</td>
+                                <td class="px-4 py-4">$7.99</td>
+                                <td class="px-4 py-4 text-xs">Plástico Estándar</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Lundberg-Family-Organic-Stackers-Quinoa/dp/B00V6X1PD6" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Bob's Red Mill</td>
-                                <td class="px-6 py-4">$7.49</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Medio</span></td>
+                                <td class="px-5 py-4 text-slate-800">Bob's Red Mill Tri-Color</td>
+                                <td class="px-4 py-4">$7.49</td>
+                                <td class="px-4 py-4 text-xs">Bolsa Tradicional</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Organic-Tri-Color-Quinoa-Grain-Ounce/dp/B07NF8JRMC" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Ancient Harvest</td>
-                                <td class="px-6 py-4">$6.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Directo</span></td>
+                                <td class="px-5 py-4 text-slate-800">Ancient Harvest Trad.</td>
+                                <td class="px-4 py-4">$6.99</td>
+                                <td class="px-4 py-4 text-xs">Caja / Plástico</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Ancient-Harvest-Traditional-Gluten-Free-Supergrain/dp/B000VK6FL2" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Whole Foods 365</td>
-                                <td class="px-6 py-4">$4.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Marca Blanca</span></td>
+                                <td class="px-5 py-4 text-slate-800">Whole Foods 365 Organic</td>
+                                <td class="px-4 py-4">$4.99</td>
+                                <td class="px-4 py-4 text-xs">Plástico Económico</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/365-Whole-Foods-Market-Organic/dp/B084NHCJWK" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Trader Joe's</td>
-                                <td class="px-6 py-4">$4.49</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Marca Blanca</span></td>
+                                <td class="px-5 py-4 text-slate-800">Trader Joe's Organic</td>
+                                <td class="px-4 py-4">$4.49</td>
+                                <td class="px-4 py-4 text-xs">Plástico Económico</td>
+                                <td class="px-4 py-4 text-center"><a href="https://www.amazon.com/Trader-Joes-Organic-Tricolor-Quinoa/dp/B00AOOV6SC" target="_blank" class="text-indigo-500 hover:underline">Ver Amazon</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -283,10 +301,10 @@
             </div>
 
             <!-- Bubble Chart -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 sm:p-8 flex flex-col">
                 <div class="mb-4">
-                    <h2 class="text-lg font-bold text-slate-900">Mapa de Posicionamiento</h2>
-                    <p class="text-xs text-slate-500 mt-1">Eje X: Precio | Eje Y: Calidad Percibida | Tamaño: Cuota Relativa</p>
+                    <h2 class="text-xl font-bold text-slate-900">Matriz de Posicionamiento</h2>
+                    <p class="text-xs text-slate-500 mt-1">Eje X: Precio USD | Eje Y: Calidad Percibida | Tamaño: Cuota Relativa</p>
                 </div>
                 <div class="chart-container flex-grow">
                     <canvas id="bubbleChart"></canvas>
@@ -294,102 +312,96 @@
             </div>
         </section>
 
-        <!-- E. SIMULADOR DE GROWTH & ROI -->
-        <section class="bg-slate-900 rounded-3xl shadow-lg p-1">
-            <div class="bg-white rounded-[23px] p-6 sm:p-10">
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                        Simulador SaaS: Growth & ROI
-                    </h2>
-                    <p class="text-slate-500 text-sm">Calculadora en tiempo real para proyectar rentabilidad (LTV/CAC) de campañas digitales.</p>
+        <!-- 5. SIMULADOR GROWTH & ROI -->
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 sm:p-10">
+            <div class="mb-8 border-b border-slate-100 pb-6">
+                <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Simulador Growth Marketing
+                </h2>
+                <p class="text-slate-500 mt-1 text-sm">Proyección matemática en tiempo real para campañas digitales (CAC vs LTV).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- Controles Izquierda (Compactados) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Inversión (Gasto)</label>
+                            <span id="sim-inv-val" class="text-sm font-bold text-slate-900">$2,000</span>
+                        </div>
+                        <input type="range" id="sim-inv" min="500" max="15000" step="100" value="2000" oninput="runSimulator()">
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tráfico (Clics)</label>
+                            <span id="sim-clicks-val" class="text-sm font-bold text-slate-900">5,000</span>
+                        </div>
+                        <input type="range" id="sim-clicks" min="1000" max="50000" step="500" value="5000" oninput="runSimulator()">
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-brand-500">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tasa Conversión (%)</label>
+                            <span id="sim-conv-val" class="text-sm font-bold text-slate-900">2.5%</span>
+                        </div>
+                        <input type="range" id="sim-conv" min="0.5" max="8.0" step="0.1" value="2.5" oninput="runSimulator()">
+                        <p class="text-[11px] font-semibold text-slate-600 mt-2">
+                            <span id="sim-buyers-val" class="font-extrabold text-brand-600">125</span> clientes nuevos (compradores)
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex justify-between mb-2">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Recurrencia</label>
+                            <span id="sim-rec-val" class="text-sm font-bold text-slate-900">12 Meses</span>
+                        </div>
+                        <input type="range" id="sim-rec" min="1" max="24" step="1" value="12" oninput="runSimulator()">
+                    </div>
+                    
+                    <!-- Static Value Note -->
+                    <div class="text-[10px] text-slate-400 mt-2 text-center">
+                        Valor de Venta fijado en $6.50 por unidad.
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- Resultados y Gráficos Derecha -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
                     
-                    <!-- Controles (Sliders) -->
-                    <div class="lg:col-span-5 space-y-6">
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                            <div class="flex justify-between mb-2">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Inversión MKT ($)</label>
-                                <span id="val-inv" class="text-sm font-bold text-slate-900">$2,000</span>
-                            </div>
-                            <input type="range" id="inv-marketing" min="500" max="20000" step="100" value="2000" oninput="updateSimulator()">
+                    <!-- Fila Superior: Tarjetas CAC y LTV -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-center shadow-sm">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Costo Adquisición (CAC)</p>
+                            <p id="out-cac" class="text-3xl font-extrabold text-slate-900 mt-1">$16.00</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Por cliente nuevo</p>
                         </div>
-                        
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                            <div class="flex justify-between mb-2">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Tráfico (Clics)</label>
-                                <span id="val-clicks" class="text-sm font-bold text-slate-900">5,000</span>
-                            </div>
-                            <input type="range" id="clicks" min="1000" max="50000" step="500" value="5000" oninput="updateSimulator()">
-                        </div>
-
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                            <div class="flex justify-between mb-2">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Tasa Conversión (%)</label>
-                                <span id="val-conv" class="text-sm font-bold text-slate-900">2.5%</span>
-                            </div>
-                            <input type="range" id="conv-rate" min="0.5" max="10" step="0.1" value="2.5" oninput="updateSimulator()">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-[10px] font-bold text-slate-500 uppercase">Valor Venta</label>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-slate-400">$</span>
-                                    <input type="number" id="val-venta" value="6.50" step="0.1" class="w-full bg-transparent font-bold text-slate-900 outline-none" oninput="updateSimulator()">
-                                </div>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-[10px] font-bold text-slate-500 uppercase">Meses Vida</label>
-                                    <span id="val-rec-display" class="text-xs font-bold text-slate-900">6</span>
-                                </div>
-                                <input type="range" id="recurrencia" min="1" max="24" step="1" value="6" oninput="updateSimulator()">
-                            </div>
+                        <div class="border border-brand-200 bg-brand-50 rounded-xl p-4 flex flex-col justify-center shadow-sm">
+                            <p class="text-[10px] font-bold text-brand-600 uppercase tracking-wider">Life Time Value (LTV)</p>
+                            <p id="out-ltv" class="text-3xl font-extrabold text-brand-700 mt-1">$78.00</p>
+                            <p class="text-[10px] text-brand-600/70 mt-1">Valor en el tiempo</p>
                         </div>
                     </div>
 
-                    <!-- Gráficos y Resultados -->
-                    <div class="lg:col-span-7 flex flex-col gap-6">
-                        <!-- Score Cards -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="p-4 border border-slate-200 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">CAC Real</p>
-                                    <p id="out-cac" class="text-2xl font-bold text-slate-900 mt-1">$16.00</p>
-                                </div>
-                                <div id="cac-status" class="w-3 h-3 rounded-full bg-amber-500"></div>
-                            </div>
-                            <div class="p-4 border border-emerald-200 bg-emerald-50 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-[10px] font-bold text-emerald-600 uppercase">LTV (Life Time Value)</p>
-                                    <p id="out-ltv" class="text-2xl font-bold text-emerald-700 mt-1">$39.00</p>
-                                </div>
-                                <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <!-- Fila Inferior: Gráficos -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+                        <!-- Bar Chart -->
+                        <div class="border border-slate-100 rounded-xl p-5 flex flex-col bg-white">
+                            <p class="text-xs font-semibold text-slate-500 text-center mb-4">Gasto vs Retorno LTV</p>
+                            <div class="relative flex-grow">
+                                <canvas id="growthChart"></canvas>
                             </div>
                         </div>
-
-                        <!-- Charts Area -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-                            <div class="border border-slate-100 rounded-xl p-4 flex flex-col">
-                                <p class="text-xs font-semibold text-slate-500 text-center mb-2">Inversión vs Retorno LTV</p>
-                                <div class="flex-grow relative">
-                                    <canvas id="barChart"></canvas>
-                                </div>
+                        
+                        <!-- Gauge (Doughnut) Chart -->
+                        <div class="border border-slate-100 rounded-xl p-5 flex flex-col items-center justify-center relative bg-white">
+                            <p class="text-xs font-semibold text-slate-500 text-center mb-2">Ratio LTV / CAC</p>
+                            <div class="chart-gauge">
+                                <canvas id="gaugeChart"></canvas>
                             </div>
-                            <div class="border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center relative">
-                                <p class="text-xs font-semibold text-slate-500 text-center mb-2">Ratio LTV / CAC</p>
-                                <div class="chart-gauge">
-                                    <canvas id="gaugeChart"></canvas>
-                                </div>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center mt-6 pointer-events-none">
-                                    <span id="out-ratio" class="text-3xl font-extrabold text-slate-900">2.4x</span>
-                                    <span class="text-[10px] text-slate-400">Target > 3.0x</span>
-                                </div>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center mt-8 pointer-events-none">
+                                <span id="out-ratio" class="text-3xl font-extrabold text-slate-900">4.8x</span>
+                                <span class="text-[10px] text-slate-400 mt-1">Target > 3.0x</span>
                             </div>
                         </div>
                     </div>
@@ -399,191 +411,195 @@
 
     </main>
 
-    <!-- F. CRÉDITOS Y FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-12 mt-10">
+    <!-- 6. FOOTER Y CRÉDITOS -->
+    <footer class="bg-white border-t border-slate-200 py-12 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center md:text-left">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Equipo Desarrollador 100%</p>
-                    <ul class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3 text-sm font-medium text-slate-600">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Gianella Armas Cana</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Rosamía Céspedes Durand</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Paola Mamani Sanchez</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Marilin Medina Apolinario</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Eric Mozombite Shishco</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Tamia Obregón Espinoza</li>
+            <div class="text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4">Créditos de Desarrollo [100%]</h4>
+                    <ul class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-sm font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Gianella Armas Cana</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Rosamía Céspedes Durand</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Paola Mamani Sanchez</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Marilin Medina Apolinario</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Eric Mozombite Shishco</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>Tamia Obregón Espinoza</li>
                     </ul>
                 </div>
-                <div class="text-right flex flex-col items-center md:items-end">
-                    <div class="text-xs font-mono text-slate-400">ADEX Escuela | BI & Analytics</div>
-                    <div class="text-xs text-slate-400 mt-1">© 2026 Andean Pure Grains. Todos los derechos reservados.</div>
+                <div class="text-right flex flex-col items-center md:items-end mt-4 md:mt-0">
+                    <div class="text-xs font-mono text-slate-400">ADEX Escuela | BI Analytics</div>
+                    <div class="text-xs text-slate-400 mt-1">© 2026 Andean Pure Grains.</div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- LÓGICA DE NEGOCIO Y RENDERIZADO (Vanilla JS) -->
+    <!-- LOGIC SCRIPTS (Vanilla JS) -->
     <script>
-        // --- 1. Customer Journey Logic ---
-        const journeyData = {
-            conciencia: {
-                title: "1. Fase de Conciencia",
-                channels: "Instagram Reels (Foodies), Búsqueda SEO 'Plant-based protein'.",
-                tactic: "Estrategia de contenidos (Inbound) enfocada en beneficios nutricionales y origen andino.",
-                metric: "Impresiones y Clics (CTR) en RRSS."
+        // --- 1. CUSTOMER JOURNEY ---
+        const journeys = [
+            {
+                tactic: "Estrategia Inbound: SEO 'Plant-based protein' y Reels con influencers (Foodies).",
+                channels: "Instagram, TikTok, Google Ads Search.",
+                kpi: "CTR, Costo por Clic (CPC)."
             },
-            consideracion: {
-                title: "2. Fase de Consideración",
-                channels: "Página de Amazon, Reseñas, Comparativa de precios en Whole Foods.",
-                tactic: "Destacar certificaciones USDA Organic y justificar el precio competitivo ($6.50).",
-                metric: "Tasa de rebote, Tiempo en página de producto."
+            {
+                tactic: "Social Proof: Destacar sellos USDA Organic e instruir sobre lavado sin saponina.",
+                channels: "Amazon Listing (A+ Content), Reseñas de Whole Foods.",
+                kpi: "Tiempo en página, Tasa de rebote."
             },
-            conversion: {
-                title: "3. Fase de Conversión",
-                channels: "Checkout Amazon FBA o e-commerce propio D2C.",
-                tactic: "Fricción cero: envío rápido (Prime) y garantía de calidad. Promoción de primer envío gratis.",
-                metric: "Tasa de Conversión (Target 2.5%), Costo de Adquisición (CAC)."
+            {
+                tactic: "Reducción de fricción: Envío Prime rápido y promoción de primer envío gratis D2C.",
+                channels: "Checkout Amazon FBA, Shopify Store.",
+                kpi: "Tasa de Conversión, CAC."
             },
-            fidelizacion: {
-                title: "4. Fase de Fidelización",
-                channels: "Email Marketing, Programa 'Subscribe & Save', Unboxing Experience.",
-                tactic: "Incluir tarjeta de preparación (eliminar fricción de sabor amargo). Recetas mensuales.",
-                metric: "Life Time Value (LTV), Net Promoter Score (NPS), Churn Rate."
+            {
+                tactic: "Nutrición post-venta: Tarjetas de recetas en el empaque y correos automatizados.",
+                channels: "Email Marketing, Programa Subscribe & Save.",
+                kpi: "LTV, Churn Rate, NPS."
             }
-        };
+        ];
 
-        function updateJourney(stepId) {
-            // Update UI buttons
-            document.querySelectorAll('.journey-btn').forEach(btn => btn.classList.remove('journey-active'));
-            document.getElementById('btn-' + stepId).classList.add('journey-active');
+        function setJourney(index) {
+            // Update UI styling
+            document.querySelectorAll('.j-btn').forEach((btn, i) => {
+                if(i === index) {
+                    btn.className = "j-btn relative p-5 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center text-center group border-brand-500 bg-brand-50 shadow-md transform -translate-y-1";
+                    btn.querySelector('div').className = "w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-600 mb-3";
+                } else {
+                    btn.className = "j-btn relative p-5 rounded-2xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group";
+                    btn.querySelector('div').className = "w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 group-hover:text-slate-800 mb-3 transition-colors";
+                }
+            });
 
-            // Render Card
-            const data = journeyData[stepId];
+            // Update content card
+            const data = journeys[index];
             const card = document.getElementById('journey-card');
             card.innerHTML = `
-                <div class="fade-in h-full flex flex-col justify-center">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">${data.title}</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Táctica Base</span><p class="text-sm text-slate-700 font-medium">${data.tactic}</p></div>
-                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Canales Clave</span><p class="text-sm text-slate-600">${data.channels}</p></div>
-                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">KPI a Medir</span><p class="text-sm font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 inline-block rounded">${data.metric}</p></div>
+                <div class="fade-in grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Táctica Principal</span>
+                        <p class="text-sm text-slate-800 font-medium">${data.tactic}</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Canales Clave</span>
+                        <p class="text-sm text-slate-600">${data.channels}</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">KPI a Medir</span>
+                        <span class="inline-block px-3 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-md">${data.kpi}</span>
                     </div>
                 </div>
             `;
         }
 
-        // --- 2. 9Ps Marketing Mix Logic con Imágenes Dinámicas ---
+        // --- 2. DYNAMIC 9Ps (Glassmorphism con Menú Claro) ---
+        const statusConfig = {
+            "Implementado": "bg-green-100 text-green-700 border-green-200",
+            "Validado": "bg-blue-100 text-blue-700 border-blue-200",
+            "En Proceso": "bg-yellow-100 text-yellow-700 border-yellow-200",
+            "Planificado": "bg-orange-100 text-orange-700 border-orange-200",
+            "En Diseño": "bg-purple-100 text-purple-700 border-purple-200"
+        };
+
         const mix9Ps = [
-            { id: 'p1', name: 'Producto', estrategia: 'Quinua orgánica (Blanca/Tricolor) pre-lavada, certificada USDA Organic y libre de saponina.', metrica: 'Tasa de devoluciones < 1%', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG' },
-            { id: 'p2', name: 'Precio', estrategia: 'Penetración premium. Retail price fijado en $6.50 (16oz) para ganar share frente a Ancient Harvest ($6.99).', metrica: 'Margen Bruto > 45%', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/2P_Precio.png' },
-            { id: 'p3', name: 'Plaza', estrategia: 'Venta inicial D2C vía Amazon FBA en la costa oeste (Los Ángeles, CA).', metrica: 'Velocidad de inventario (FBA)', estado: 'En proceso', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/3P_Plaza.png' },
-            { id: 'p4', name: 'Promoción', estrategia: 'Ads en Instagram/TikTok enfocados en nichos veganos y fitness. Micro-influencers.', metrica: 'ROAS > 3.0', estado: 'Planificado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/4P_Promocion.png' },
-            { id: 'p5', name: 'Personas', estrategia: 'Equipo de soporte bilingüe (CX) y programa de comercio justo con agricultores.', metrica: 'NPS de Empleados/Socios', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/5P_Personas.png' },
-            { id: 'p6', name: 'Procesos', estrategia: 'Trazabilidad con código QR en empaque para ver el origen exacto del grano.', metrica: 'Tiempo ciclo de exportación', estado: 'En diseño', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/6P_Procesos.png' },
-            { id: 'p7', name: 'Evidencia Física', estrategia: 'Empaque Doypack ecológico (kraft/biodegradable) con cierre hermético (ziploc).', metrica: 'Score de Empaque (UX)', estado: 'Prototipo', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/7P_Evidencia_F%C3%ADsica.png' },
-            { id: 'p8', name: 'Alianzas', estrategia: 'Alianzas con distribuidores boutique en LA y ONG agrícolas en Perú.', metrica: 'Volumen via Partners', estado: 'En negociación', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/8P_Alianzas.png' },
-            { id: 'p9', name: 'Propósito', estrategia: 'Empoderar a comunidades andinas mediante comercio justo y ofrecer agricultura 100% regenerativa.', metrica: 'Impacto Social (Familias)', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/9P%2BProp%C3%B3sito.png' }
+            { id: 'p1', name: 'Producto', estrategia: 'Quinua orgánica (Blanca/Tricolor) pre-lavada, certificada USDA Organic y libre de saponina.', metrica: 'Devoluciones < 1%', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG' },
+            { id: 'p2', name: 'Precio', estrategia: 'Retail price fijado en $6.50 (16oz). Estrategia premium competitiva frente a marcas líderes.', metrica: 'Margen > 45%', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/2P_Precio.png' },
+            { id: 'p3', name: 'Plaza', estrategia: 'Venta inicial D2C vía Amazon FBA en la costa oeste (Los Ángeles, CA) y canales retail.', metrica: 'Rotación Inventario', estado: 'En Proceso', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/3P_Plaza.png' },
+            { id: 'p4', name: 'Promoción', estrategia: 'Performance Ads y campañas Inbound enfocadas en nutrición Plant-Based.', metrica: 'ROAS > 3.0', estado: 'Planificado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/4P_Promocion.png' },
+            { id: 'p5', name: 'Personas', estrategia: 'Equipo bilingüe enfocado en CX y agricultores certificados en buenas prácticas.', metrica: 'NPS Empleados', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/5P_Personas.png' },
+            { id: 'p6', name: 'Procesos', estrategia: 'Trazabilidad y estandarización del triple lavado para asegurar 0% amargor.', metrica: 'Eficiencia Op.', estado: 'En Diseño', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/6P_Procesos.png' },
+            { id: 'p7', name: 'Evidencia Física', estrategia: 'Empaque Premium Doypack (biodegradable) con cierre hermético y diseño limpio.', metrica: 'Score UX Empaque', estado: 'En Diseño', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/7P_Evidencia_F%C3%ADsica.png' },
+            { id: 'p8', name: 'Alianzas', estrategia: 'Operadores logísticos en Long Beach y distribuidores de alimentos saludables.', metrica: 'Acuerdos B2B', estado: 'En Proceso', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/8P_Alianzas.png' },
+            { id: 'p9', name: 'Propósito', estrategia: 'Comercio justo con comunidades altoandinas y prácticas agrícolas regenerativas.', metrica: 'Impacto Social', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/9P%2BProp%C3%B3sito.png' }
         ];
 
-        function render9PsTabs() {
-            const container = document.getElementById('tabs-container');
-            mix9Ps.forEach((p, index) => {
+        function init9Ps() {
+            const container = document.getElementById('p-tabs-container');
+            mix9Ps.forEach((p, i) => {
                 const btn = document.createElement('button');
-                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors ${index === 0 ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50 border-b border-slate-100 md:border-b-0'}`;
-                btn.innerText = `P${index+1}. ${p.name}`;
-                btn.onclick = () => update9Ps(index);
+                btn.className = `p-tab-btn w-full text-left px-5 py-4 text-sm font-medium transition-colors border-b border-slate-100 text-slate-500 hover:bg-slate-50 hover:text-slate-800 border-l-4 border-l-transparent`;
+                btn.innerText = `P${i+1}. ${p.name}`;
+                btn.onclick = () => set9P(i);
                 container.appendChild(btn);
             });
-            update9Ps(0); // Init
+            set9P(0);
         }
 
-        function update9Ps(index) {
-            // Actualizar botones UI
+        function set9P(index) {
             document.querySelectorAll('.p-tab-btn').forEach((btn, i) => {
-                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors ${i === index ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50 border-b border-slate-100 md:border-b-0'}`;
+                btn.className = `p-tab-btn w-full text-left px-5 py-4 text-sm font-medium transition-colors border-b border-slate-100 ${i===index ? 'bg-slate-50 text-slate-900 border-l-4 border-l-brand-500' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 border-l-4 border-l-transparent'}`;
             });
             
             const data = mix9Ps[index];
-            const content = document.getElementById('tab-content');
+            document.getElementById('p-bg-image').style.backgroundImage = `url('${data.image}')`;
             
-            let statusColor = data.estado === 'Implementado' || data.estado === 'Validado' ? 'text-emerald-700 bg-emerald-100' : 
-                              data.estado === 'En proceso' ? 'text-indigo-700 bg-indigo-100' : 'text-amber-700 bg-amber-100';
-
-            // HTML Estructurado para Imagen (80%) + Tarjeta (60% Glassmorphism)
+            const statusClass = statusConfig[data.estado] || "bg-slate-100 text-slate-700";
+            
+            const content = document.getElementById('p-content-card');
             content.innerHTML = `
-                <!-- Capa del Fondo (Imagen al 80% de opacidad) -->
-                <div class="absolute inset-0 z-0 transition-all duration-500 ease-in-out" style="background-image: url('${data.image}'); background-size: cover; background-position: center; opacity: 0.8;"></div>
-                
-                <!-- Contenedor Principal Absoluto -->
-                <div class="relative z-10 p-6 sm:p-10 w-full h-full min-h-[450px] flex flex-col justify-center">
-                    
-                    <!-- Ficha (Card) con 60% de opacidad blanca (bg-white/60) y filtro de desenfoque -->
-                    <div class="fade-in bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/60 shadow-2xl w-full max-w-2xl">
-                        
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-3xl font-extrabold text-slate-900 drop-shadow-sm">${data.name}</h3>
-                            <span class="px-3 py-1.5 text-xs font-bold rounded-full ${statusColor} shadow-sm backdrop-blur-sm bg-white/80 border border-white/50">${data.estado}</span>
+                <div class="fade-in">
+                    <div class="flex items-center justify-between mb-8 border-b border-white/40 pb-4">
+                        <h3 class="text-3xl font-extrabold text-slate-900 drop-shadow-md">${data.name}</h3>
+                        <span class="px-3 py-1 text-xs font-bold uppercase rounded-full border ${statusClass} shadow-sm backdrop-blur-md bg-white/70">${data.estado}</span>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-[10px] font-extrabold text-slate-700 uppercase tracking-widest mb-2 block drop-shadow-sm">Directriz Estratégica</span>
+                            <p class="text-slate-900 font-medium leading-relaxed bg-white/70 p-5 rounded-xl border border-white/60 shadow-sm">${data.estrategia}</p>
                         </div>
-                        
-                        <div class="space-y-6">
-                            <div>
-                                <p class="text-[11px] font-extrabold text-slate-800 uppercase tracking-widest mb-2 drop-shadow-sm">Estrategia Táctica</p>
-                                <p class="text-slate-900 font-medium leading-relaxed bg-white/50 p-4 rounded-xl border border-white/40 shadow-sm">${data.estrategia}</p>
-                            </div>
-                            <div>
-                                <p class="text-[11px] font-extrabold text-slate-800 uppercase tracking-widest mb-2 drop-shadow-sm">Métrica de Éxito (KPI)</p>
-                                <p class="text-slate-900 font-bold flex items-center gap-2 bg-white/50 p-4 rounded-xl border border-white/40 shadow-sm">
-                                    <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    ${data.metrica}
-                                </p>
-                            </div>
+                        <div>
+                            <span class="text-[10px] font-extrabold text-slate-700 uppercase tracking-widest mb-2 block drop-shadow-sm">Métrica de Éxito</span>
+                            <p class="text-slate-900 font-bold bg-white/70 p-4 rounded-xl border border-white/60 shadow-sm flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                ${data.metrica}
+                            </p>
                         </div>
-
                     </div>
                 </div>
             `;
         }
 
-        // --- 3. Charts Initialization (Chart.js) ---
-        let bubbleInstance, barInstance, gaugeInstance;
+        // --- 3. CHARTS ---
+        let bubbleChart, barChart, gaugeChart;
 
         function initCharts() {
-            // A. Bubble Chart (Benchmarking)
+            // A. Bubble Chart (Radios equilibrados de 10 a 20)
             const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
-            bubbleInstance = new Chart(ctxBubble, {
+            bubbleChart = new Chart(ctxBubble, {
                 type: 'bubble',
                 data: {
                     datasets: [
-                        { label: 'Andean Pure Grains ($6.50)', data: [{x: 6.50, y: 9.0, r: 15}], backgroundColor: 'rgba(5, 150, 105, 0.8)', borderColor: '#047857', borderWidth: 2 }, // Dorado/Verde (Emerald)
-                        { label: 'Alter Eco ($8.99)', data: [{x: 8.99, y: 9.5, r: 8}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
-                        { label: 'Lundberg ($7.99)', data: [{x: 7.99, y: 8.5, r: 10}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
-                        { label: 'Bob\'s Red Mill ($7.49)', data: [{x: 7.49, y: 8.0, r: 16}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
-                        { label: 'Ancient Harvest ($6.99)', data: [{x: 6.99, y: 7.5, r: 18}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
-                        { label: 'Whole Foods 365 ($4.99)', data: [{x: 4.99, y: 6.0, r: 22}], backgroundColor: 'rgba(203, 213, 225, 0.6)' },
-                        { label: 'Trader Joe\'s ($4.49)', data: [{x: 4.49, y: 6.5, r: 20}], backgroundColor: 'rgba(203, 213, 225, 0.6)' }
+                        { label: 'Andean Pure Grains', data: [{x: 6.50, y: 9.0, r: 16}], backgroundColor: 'rgba(22, 163, 74, 0.9)', borderColor: '#14532d', borderWidth: 2 },
+                        { label: 'Alter Eco', data: [{x: 8.99, y: 9.5, r: 10}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
+                        { label: 'Lundberg', data: [{x: 7.99, y: 8.5, r: 12}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
+                        { label: 'Bob\'s Red Mill', data: [{x: 7.49, y: 8.0, r: 14}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
+                        { label: 'Ancient Harvest', data: [{x: 6.99, y: 7.5, r: 15}], backgroundColor: 'rgba(148, 163, 184, 0.6)' },
+                        { label: 'Whole Foods 365', data: [{x: 4.99, y: 6.0, r: 20}], backgroundColor: 'rgba(203, 213, 225, 0.7)' },
+                        { label: 'Trader Joe\'s', data: [{x: 4.49, y: 6.5, r: 18}], backgroundColor: 'rgba(203, 213, 225, 0.7)' }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Precio Retail en USD ($)' }, min: 4, max: 10, grid: { color: '#f1f5f9' } },
-                        y: { title: { display: true, text: 'Calidad / Valor Percibido (1-10)' }, min: 5, max: 10, grid: { color: '#f1f5f9' } }
+                        x: { title: { display: true, text: 'Precio (USD)' }, min: 4, max: 10, grid: { color: '#f8fafc' } },
+                        y: { title: { display: true, text: 'Calidad Percibida' }, min: 5, max: 10, grid: { color: '#f8fafc' } }
                     },
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } }
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } }
                 }
             });
 
-            // B. Bar Chart (Simulator)
-            const ctxBar = document.getElementById('barChart').getContext('2d');
-            barInstance = new Chart(ctxBar, {
+            // B. Bar Chart (Gasto vs Retorno)
+            const ctxBar = document.getElementById('growthChart').getContext('2d');
+            barChart = new Chart(ctxBar, {
                 type: 'bar',
-                data: { labels: ['Inversión Ads', 'Ingreso Proyectado'], datasets: [{ data: [2000, 0], backgroundColor: ['#cbd5e1', '#059669'], borderRadius: 6 }] },
+                data: { labels: ['Gasto MKT', 'Retorno Proyectado'], datasets: [{ data: [2000, 0], backgroundColor: ['#cbd5e1', '#4f46e5'], borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
             });
 
-            // C. Gauge Chart (Half Doughnut for Ratio)
+            // C. Gauge Chart (Doughnut LTV/CAC)
             const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
-            gaugeInstance = new Chart(ctxGauge, {
+            gaugeChart = new Chart(ctxGauge, {
                 type: 'doughnut',
                 data: { labels: ['Ratio Actual', 'Restante al Target'], datasets: [{ data: [1, 2], backgroundColor: ['#10b981', '#f1f5f9'], borderWidth: 0 }] },
                 options: { 
@@ -595,71 +611,77 @@
             });
         }
 
-        // --- 4. Simulator Engine ---
-        function updateSimulator() {
-            // Get values
-            const inv = parseFloat(document.getElementById('inv-marketing').value);
-            const clicks = parseFloat(document.getElementById('clicks').value);
-            const convRate = parseFloat(document.getElementById('conv-rate').value) / 100;
-            const valorVenta = parseFloat(document.getElementById('val-venta').value) || 0;
-            const recurrencia = parseInt(document.getElementById('recurrencia').value);
+        // --- 4. SIMULATOR LOGIC ---
+        function runSimulator() {
+            // Fetch inputs
+            const inv = parseFloat(document.getElementById('sim-inv').value);
+            const clicks = parseFloat(document.getElementById('sim-clicks').value);
+            const convRate = parseFloat(document.getElementById('sim-conv').value) / 100;
+            const rec = parseInt(document.getElementById('sim-rec').value);
+            const fixedPrice = 6.50;
 
             // Update UI Labels
-            document.getElementById('val-inv').innerText = '$' + inv.toLocaleString();
-            document.getElementById('val-clicks').innerText = clicks.toLocaleString();
-            document.getElementById('val-conv').innerText = (convRate * 100).toFixed(1) + '%';
-            document.getElementById('val-rec-display').innerText = recurrencia;
+            document.getElementById('sim-inv-val').innerText = '$' + inv.toLocaleString();
+            document.getElementById('sim-clicks-val').innerText = clicks.toLocaleString();
+            document.getElementById('sim-conv-val').innerText = (convRate * 100).toFixed(1) + '%';
+            document.getElementById('sim-rec-val').innerText = rec + (rec === 1 ? ' Mes' : ' Meses');
 
-            // Math Logic
-            const conversiones = clicks * convRate;
+            // Math
+            const conversions = Math.round(clicks * convRate); // Personas exactas
             let cac = 0;
-            if (conversiones > 0) cac = inv / conversiones;
-            const ltv = valorVenta * recurrencia;
-            const ingresosTotales = conversiones * ltv;
+            if (conversions > 0) cac = inv / conversions;
+            const ltv = fixedPrice * rec;
+            const expectedReturn = conversions * ltv;
             let ratio = 0;
             if (cac > 0) ratio = ltv / cac;
 
-            // Update UI Outputs
+            // Update Buyers UI
+            document.getElementById('sim-buyers-val').innerText = conversions.toLocaleString();
+
+            // Display Results
             document.getElementById('out-cac').innerText = '$' + cac.toFixed(2);
             document.getElementById('out-ltv').innerText = '$' + ltv.toFixed(2);
             document.getElementById('out-ratio').innerText = ratio.toFixed(1) + 'x';
-            
-            // Status Indicators
-            const cacStatus = document.getElementById('cac-status');
-            if(cac > valorVenta) { cacStatus.className = 'w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]'; } 
-            else { cacStatus.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'; }
 
+            // Text Color for Ratio
             const ratioText = document.getElementById('out-ratio');
             if (ratio >= 3) ratioText.className = "text-3xl font-extrabold text-emerald-600";
             else if (ratio >= 1) ratioText.className = "text-3xl font-extrabold text-amber-500";
             else ratioText.className = "text-3xl font-extrabold text-rose-500";
 
-            // Update Charts
-            if (barInstance) {
-                barInstance.data.datasets[0].data = [inv, ingresosTotales];
-                barInstance.update();
+            // Update Bar Chart
+            if (barChart) {
+                barChart.data.datasets[0].data = [inv, expectedReturn];
+                if (cac > ltv && conversions > 0) {
+                    barChart.data.datasets[0].backgroundColor = ['#cbd5e1', '#f43f5e']; // Rojo si pierdes dinero
+                } else {
+                    barChart.data.datasets[0].backgroundColor = ['#cbd5e1', '#4f46e5']; // Azul si es rentable
+                }
+                barChart.update();
             }
-            if (gaugeInstance) {
-                const target = 3.0; // SaaS Standard Target
+
+            // Update Gauge/Doughnut Chart
+            if (gaugeChart) {
+                const target = 3.0; // Benchmark sano
                 const current = Math.min(ratio, target);
                 const remainder = target - current;
                 
-                let color = '#f43f5e'; // Red (Bad)
-                if (ratio >= 3) color = '#10b981'; // Green (Excellent)
-                else if (ratio >= 1.5) color = '#f59e0b'; // Yellow (Warning)
+                let color = '#f43f5e'; // Rojo
+                if (ratio >= 3) color = '#10b981'; // Verde
+                else if (ratio >= 1.5) color = '#f59e0b'; // Amarillo
 
-                gaugeInstance.data.datasets[0].data = [current, remainder];
-                gaugeInstance.data.datasets[0].backgroundColor = [color, '#f1f5f9'];
-                gaugeInstance.update();
+                gaugeChart.data.datasets[0].data = [current, Math.max(0, remainder)];
+                gaugeChart.data.datasets[0].backgroundColor = [color, '#f1f5f9'];
+                gaugeChart.update();
             }
         }
 
-        // --- Boot ---
+        // --- BOOTSTRAP ---
         window.onload = () => {
-            updateJourney('conciencia');
-            render9PsTabs();
+            setJourney(0);
+            init9Ps();
             initCharts();
-            updateSimulator();
+            runSimulator();
         };
     </script>
 </body>
