@@ -69,7 +69,7 @@
                     <span class="text-xl font-extrabold tracking-tight text-slate-900">Andean <span class="text-brand-600">Pure Grains</span></span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.2</span>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.3</span>
                 </div>
             </div>
         </div>
@@ -273,25 +273,25 @@
             </div>
         </section>
 
-        <!-- 5. SIMULADOR GROWTH & ROI -->
+        <!-- 5. SIMULADOR GROWTH & ROI (Actualizado con Escala Cero) -->
         <section id="s5-simulator" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 sm:p-10">
             <div class="mb-8 border-b border-slate-100 pb-6">
                 <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
                     <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                     Simulador Growth Marketing
                 </h2>
-                <p class="text-slate-500 mt-1 text-sm">Proyección matemática en tiempo real para campañas digitales (CAC vs LTV).</p>
+                <p class="text-slate-500 mt-1 text-sm">Proyección en tiempo real. Ahora permite escalas desde cero para análisis de impacto total.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <!-- Controles Izquierda -->
+                <!-- Controles Izquierda (Ajustados a 0) -->
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div class="flex justify-between mb-2">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Inversión (Gasto)</label>
                             <span id="sim-inv-val" class="text-sm font-bold text-slate-900">$2,000</span>
                         </div>
-                        <input type="range" id="sim-inv" min="500" max="15000" step="100" value="2000" oninput="runSimulator()">
+                        <input type="range" id="sim-inv" min="0" max="15000" step="100" value="2000" oninput="runSimulator()">
                     </div>
 
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -299,7 +299,7 @@
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tráfico (Clics)</label>
                             <span id="sim-clicks-val" class="text-sm font-bold text-slate-900">5,000</span>
                         </div>
-                        <input type="range" id="sim-clicks" min="1000" max="50000" step="500" value="5000" oninput="runSimulator()">
+                        <input type="range" id="sim-clicks" min="0" max="50000" step="500" value="5000" oninput="runSimulator()">
                     </div>
 
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-brand-500 shadow-sm">
@@ -320,10 +320,6 @@
                         </div>
                         <input type="range" id="sim-rec" min="1" max="24" step="1" value="12" oninput="runSimulator()">
                     </div>
-                    
-                    <div class="text-[10px] text-slate-400 mt-2 text-center">
-                        Valor de Venta fijado en $6.50 por unidad.
-                    </div>
                 </div>
 
                 <!-- Resultados Derecha -->
@@ -332,7 +328,7 @@
                         <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-center shadow-sm">
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Costo Adquisición (CAC)</p>
                             <p id="out-cac" class="text-3xl font-extrabold text-slate-900 mt-1">$16.00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Por cliente nuevo</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Costo por cliente</p>
                         </div>
                         <div class="border border-brand-200 bg-brand-50 rounded-xl p-4 flex flex-col justify-center shadow-sm">
                             <p class="text-[10px] font-bold text-brand-600 uppercase tracking-wider">Life Time Value (LTV)</p>
@@ -471,9 +467,7 @@
 
         // --- 2. BENCHMARKING & ORDENAMIENTO ---
         function updateCompetitorUI() {
-            // Ordenar de mayor a menor precio
             competitorData.sort((a, b) => b.price - a.price);
-
             const tbody = document.getElementById('competitor-table-body');
             tbody.innerHTML = '';
             
@@ -494,7 +488,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-
             updateBubbleChart();
         }
 
@@ -524,26 +517,10 @@
 
         // --- 3. CUSTOMER JOURNEY ---
         const journeys = [
-            {
-                tactic: "Estrategia Inbound: SEO 'Plant-based protein' y Reels con influencers (Foodies).",
-                channels: "Instagram, TikTok, Google Ads Search.",
-                kpi: "CTR, Costo por Clic (CPC)."
-            },
-            {
-                tactic: "Social Proof: Destacar sellos USDA Organic e instruir sobre lavado sin saponina.",
-                channels: "Amazon Listing (A+ Content), Reseñas de Whole Foods.",
-                kpi: "Tiempo en página, Tasa de rebote."
-            },
-            {
-                tactic: "Reducción de fricción: Envío Prime rápido y promoción de primer envío gratis D2C.",
-                channels: "Checkout Amazon FBA, Shopify Store.",
-                kpi: "Tasa de Conversión, CAC."
-            },
-            {
-                tactic: "Nutrición post-venta: Tarjetas de recetas en el empaque y correos automatizados.",
-                channels: "Email Marketing, Programa Subscribe & Save.",
-                kpi: "LTV, Churn Rate, NPS."
-            }
+            { tactic: "Estrategia Inbound: SEO 'Plant-based protein' y Reels con influencers.", channels: "Instagram, TikTok, Google Search.", kpi: "CTR, Costo por Clic (CPC)." },
+            { tactic: "Social Proof: Destacar sellos USDA Organic e instruir sobre lavado sin saponina.", channels: "Amazon Listing, Reseñas de Whole Foods.", kpi: "Tiempo en página, Tasa de rebote." },
+            { tactic: "Reducción de fricción: Envío Prime rápido y promoción de primer envío gratis D2C.", channels: "Checkout Amazon FBA, Shopify Store.", kpi: "Tasa de Conversión, CAC." },
+            { tactic: "Nutrición post-venta: Tarjetas de recetas en el empaque y correos automatizados.", channels: "Email Marketing, Programa Subscribe & Save.", kpi: "LTV, Churn Rate, NPS." }
         ];
 
         function setJourney(index) {
@@ -561,18 +538,9 @@
             const card = document.getElementById('journey-card');
             card.innerHTML = `
                 <div class="fade-in grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Táctica Principal</span>
-                        <p class="text-sm text-slate-800 font-medium">${data.tactic}</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Canales Clave</span>
-                        <p class="text-sm text-slate-600">${data.channels}</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">KPI a Medir</span>
-                        <span class="inline-block px-3 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-md">${data.kpi}</span>
-                    </div>
+                    <div><span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Táctica Principal</span><p class="text-sm text-slate-800 font-medium">${data.tactic}</p></div>
+                    <div><span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">Canales Clave</span><p class="text-sm text-slate-600">${data.channels}</p></div>
+                    <div><span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1 block">KPI a Medir</span><span class="inline-block px-3 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-md">${data.kpi}</span></div>
                 </div>
             `;
         }
@@ -582,7 +550,6 @@
 
         function updateBubbleChart() {
             if (!bubbleChart) return;
-            
             bubbleChart.data.datasets = competitorData.map(comp => ({
                 label: comp.name,
                 data: [{ x: comp.price, y: comp.quality, r: comp.share }],
@@ -601,20 +568,10 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Precio (USD)' }, min: 3, max: 11, grid: { color: '#f8fafc' } },
+                        x: { title: { display: true, text: 'Precio (USD)' }, min: 3, max: 15, grid: { color: '#f8fafc' } },
                         y: { title: { display: true, text: 'Calidad Percibida' }, min: 5, max: 10, grid: { color: '#f8fafc' } }
                     },
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => {
-                                    const d = context.raw;
-                                    return `${context.dataset.label}: $${d.x} | Calidad: ${d.y}`;
-                                }
-                            }
-                        }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
 
@@ -622,25 +579,19 @@
             barChart = new Chart(ctxBar, {
                 type: 'bar',
                 data: { labels: ['Gasto MKT', 'Retorno Proyectado'], datasets: [{ data: [2000, 0], backgroundColor: ['#cbd5e1', '#4f46e5'], borderRadius: 6 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
             });
 
             const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
             gaugeChart = new Chart(ctxGauge, {
                 type: 'doughnut',
-                data: { labels: ['Ratio Actual', 'Restante al Target'], datasets: [{ data: [1, 2], backgroundColor: ['#10b981', '#f1f5f9'], borderWidth: 0 }] },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    circumference: 180, rotation: 270, cutout: '80%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    animation: { duration: 400 }
-                }
+                data: { labels: ['Ratio Actual', 'Restante'], datasets: [{ data: [1, 2], backgroundColor: ['#10b981', '#f1f5f9'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, circumference: 180, rotation: 270, cutout: '80%', plugins: { legend: { display: false } } }
             });
-            
             updateBubbleChart();
         }
 
-        // --- 5. LÓGICA SIMULADOR ---
+        // --- 5. LÓGICA SIMULADOR (Actualizada para Escala 0) ---
         function runSimulator() {
             const inv = parseFloat(document.getElementById('sim-inv').value);
             const clicks = parseFloat(document.getElementById('sim-clicks').value);
@@ -655,15 +606,27 @@
 
             const conversions = Math.round(clicks * convRate); 
             let cac = 0;
-            if (conversions > 0) cac = inv / conversions;
+            // Evitar División por cero o estados "Infinity"
+            if (conversions > 0 && inv > 0) {
+                cac = inv / conversions;
+            } else if (inv > 0 && conversions === 0) {
+                cac = inv; // Todo el gasto sin clientes
+            } else {
+                cac = 0;
+            }
+
             const ltv = fixedPrice * rec;
             const expectedReturn = conversions * ltv;
+            
             let ratio = 0;
-            if (cac > 0) ratio = ltv / cac;
+            if (cac > 0) {
+                ratio = ltv / cac;
+            } else if (conversions > 0 && inv === 0) {
+                ratio = 9.9; // Representa rentabilidad infinita/máxima (gratis)
+            }
 
             document.getElementById('sim-buyers-val').innerText = conversions.toLocaleString();
-
-            document.getElementById('out-cac').innerText = '$' + cac.toFixed(2);
+            document.getElementById('out-cac').innerText = conversions === 0 && inv > 0 ? 'N/A' : '$' + cac.toFixed(2);
             document.getElementById('out-ltv').innerText = '$' + ltv.toFixed(2);
             document.getElementById('out-ratio').innerText = ratio.toFixed(1) + 'x';
 
@@ -674,11 +637,7 @@
 
             if (barChart) {
                 barChart.data.datasets[0].data = [inv, expectedReturn];
-                if (cac > ltv && conversions > 0) {
-                    barChart.data.datasets[0].backgroundColor = ['#cbd5e1', '#f43f5e']; 
-                } else {
-                    barChart.data.datasets[0].backgroundColor = ['#cbd5e1', '#4f46e5']; 
-                }
+                barChart.data.datasets[0].backgroundColor = (cac > ltv && conversions > 0) ? ['#cbd5e1', '#f43f5e'] : ['#cbd5e1', '#4f46e5'];
                 barChart.update();
             }
 
@@ -686,11 +645,7 @@
                 const target = 3.0; 
                 const current = Math.min(ratio, target);
                 const remainder = target - current;
-                
-                let color = '#f43f5e'; 
-                if (ratio >= 3) color = '#10b981'; 
-                else if (ratio >= 1.5) color = '#f59e0b'; 
-
+                let color = ratio >= 3 ? '#10b981' : (ratio >= 1.5 ? '#f59e0b' : '#f43f5e');
                 gaugeChart.data.datasets[0].data = [current, Math.max(0, remainder)];
                 gaugeChart.data.datasets[0].backgroundColor = [color, '#f1f5f9'];
                 gaugeChart.update();
