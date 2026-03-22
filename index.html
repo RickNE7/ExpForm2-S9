@@ -8,123 +8,61 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; } /* slate-50 */
         
-        /* Utilidades UI */
+        /* Ocultar scrollbars para diseño limpio */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Sliders Custom */
+
+        /* Estilos SaaS Premium para Sliders */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #059669; cursor: pointer; margin-top: -7px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; border: 2px solid white; }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; cursor: pointer; background: #cbd5e1; border-radius: 3px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #059669; cursor: pointer; margin-top: -6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
         
-        /* Contenedores */
+        /* Contenedores de Gráficos Strictos */
         .chart-container { position: relative; height: 320px; width: 100%; }
         .chart-gauge { position: relative; height: 200px; width: 100%; }
 
-        /* Animaciones */
+        /* Animaciones sutiles */
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Pestañas Verticales 9Ps */
-        .tab-active { background-color: rgba(255,255,255,0.9); border-left: 4px solid #059669; color: #0f172a; font-weight: 600; }
+        /* Tab Activa Pestañas Verticales */
+        .tab-active { background-color: #f1f5f9; border-left: 4px solid #059669; color: #0f172a; font-weight: 600; }
         .tab-inactive { border-left: 4px solid transparent; color: #64748b; font-weight: 500; }
         
-        /* Panel Presentador */
-        .slide-over-open { transform: translateX(0%); }
-        .slide-over-closed { transform: translateX(100%); }
+        /* Journey Step Activo */
+        .journey-active { border-color: #059669; background-color: #ecfdf5; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1); transform: translateY(-2px); }
     </style>
 </head>
-<body class="text-slate-900 antialiased min-h-screen flex flex-col overflow-x-hidden">
+<body class="text-slate-900 antialiased min-h-screen flex flex-col">
 
-    <!-- Navbar con Botón de Presentador -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <!-- Navbar Minimalista -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                     </div>
-                    <span class="text-xl font-bold tracking-tight text-slate-800">Andean <span class="text-emerald-600">Growth BI</span></span>
+                    <span class="text-lg font-bold tracking-tight text-slate-800">Andean <span class="text-emerald-600">Growth BI</span></span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="hidden md:flex gap-3 text-xs font-semibold px-3 py-1 bg-slate-50 text-slate-500 rounded-full border border-slate-200">
-                        <span>Mercado Global: $1,384M (CAGR 4.99%)</span>
-                        <span class="border-l border-slate-300 pl-3">USA Absorbe: 72%</span>
-                    </div>
-                    <button onclick="togglePresenterMode()" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                        Modo Presentador
-                    </button>
+                <div class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-500 rounded-full border border-slate-200">
+                    Panel Ejecutivo v3.0
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- SLIDE-OVER: MODO PRESENTADOR (Guion y Explicaciones) -->
-    <div id="presenter-panel" class="fixed inset-y-0 right-0 z-[60] w-full md:w-[450px] bg-white shadow-2xl border-l border-slate-200 slide-over-closed transition-transform duration-500 ease-in-out flex flex-col">
-        <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <span class="text-emerald-600">🎙️</span> Guion & Diccionario BI
-            </h2>
-            <button onclick="togglePresenterMode()" class="text-slate-400 hover:text-slate-600 p-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <div class="p-6 overflow-y-auto flex-grow space-y-8 bg-white">
-            
-            <!-- Diccionario -->
-            <div>
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">📖 Diccionario de Siglas</h3>
-                <ul class="space-y-3 text-sm text-slate-600">
-                    <li><strong class="text-slate-900">KPI:</strong> Key Performance Indicator (Indicador Clave de Desempeño).</li>
-                    <li><strong class="text-slate-900">CAC:</strong> Customer Acquisition Cost. Cuánto cuesta en marketing conseguir 1 cliente nuevo.</li>
-                    <li><strong class="text-slate-900">LTV (Life Time Value):</strong> El valor total de ingresos que deja un cliente mientras nos siga comprando.</li>
-                    <li><strong class="text-slate-900">ROAS:</strong> Return On Ad Spend. Cuántos dólares regresan por cada dólar invertido en publicidad.</li>
-                    <li><strong class="text-slate-900">Saponina:</strong> Toxina natural de la quinua que da sabor amargo. Nuestra fricción principal a resolver (lavado).</li>
-                </ul>
-            </div>
-
-            <!-- Speech Persona 1 -->
-            <div class="bg-indigo-50 border border-indigo-100 p-5 rounded-xl">
-                <h3 class="text-sm font-bold text-indigo-800 mb-2">🗣️ Parte 1: Estratega de Mercado</h3>
-                <p class="text-sm text-indigo-900 italic leading-relaxed">
-                    "Buenos días. El mercado global de quinua alcanzará los $1,384 millones en 2032 (CAGR 4.99%). EE.UU. absorbe el 72% de las exportaciones peruanas. En nuestro Dashboard vemos el ecosistema competitivo en LA. Nuestro diferenciador es el balance Calidad-Precio: nos posicionamos en $6.50, compitiendo directamente con Ancient Harvest ($6.99) pero ofreciendo mayor valor percibido gracias a nuestras certificaciones y proceso libre de saponina."
-                </p>
-            </div>
-
-            <!-- Speech Persona 2 -->
-            <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-xl">
-                <h3 class="text-sm font-bold text-emerald-800 mb-2">🗣️ Parte 2: Growth Manager</h3>
-                <p class="text-sm text-emerald-900 italic leading-relaxed">
-                    "Continuando con la viabilidad financiera, el éxito radica en el Customer Journey y el Ratio LTV/CAC. Identificamos la 'Saponina' como la mayor fricción en la etapa de Consumo. Al invertir en CX y empaque educativo, retenemos al cliente. Como ven en el Simulador, con $2,000 de inversión y una conversión del 2.5%, logramos un CAC de $16. Si el cliente nos compra 6 veces, el LTV es de $39, dándonos un Ratio de 2.4x. El negocio es altamente escalable."
-                </p>
-            </div>
-
-            <!-- Guía del Simulador -->
-            <div>
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">⚙️ Guía del Simulador</h3>
-                <p class="text-sm text-slate-600 mb-3">Úsalo en vivo moviendo los sliders:</p>
-                <ul class="space-y-2 text-sm text-slate-600 list-disc pl-4">
-                    <li>Sube la <strong>Tasa de Conversión</strong> (ej. de 2.5% a 4%) para mostrar cómo mejora el CAC sin gastar un dólar más en Ads.</li>
-                    <li>Sube los <strong>Meses Vida (Recurrencia)</strong> para explicar la fidelización (Suscripciones Amazon) y ver cómo el LTV se dispara por encima del CAC.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- Overlay Oscuro -->
-    <div id="presenter-overlay" onclick="togglePresenterMode()" class="fixed inset-0 bg-slate-900/50 z-50 hidden transition-opacity"></div>
-
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- A. HERO & GLOBAL KPIs (Tarjetas con Explicación Explícita) -->
+        <!-- A. HERO & GLOBAL KPIs (Tarjetas con Hover/Fórmulas) -->
         <section>
             <div class="mb-6">
-                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Salud Ejecutiva del Negocio</h1>
-                <p class="text-slate-500 mt-1">Exportaciones Perú FOB: US$138.8M | Absorción USA: US$110.8M</p>
+                <h1 class="text-2xl font-bold text-slate-900">Salud del Negocio</h1>
+                <p class="text-sm text-slate-500">Métricas clave proyectadas para la incursión en el mercado retail de EE.UU.</p>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -134,15 +72,15 @@
                         <div class="p-2 bg-rose-50 rounded-lg text-rose-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Inversión / Conversión</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">Optimizado</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">Costo Adquisición (CAC)</h3>
+                    <h3 class="text-sm font-semibold text-slate-500">CAC Proyectado</h3>
                     <p class="text-3xl font-bold text-slate-900 mt-1">$14.20</p>
                     
-                    <div class="absolute inset-0 bg-slate-900 p-6 flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-[10px] font-bold text-emerald-400 mb-1">¿QUÉ SIGNIFICA?</p>
-                        <p class="text-xs text-slate-300 mb-3">El dinero exacto que gastamos en publicidad para lograr que 1 persona nueva compre nuestra quinua.</p>
-                        <p class="text-xs font-mono text-white bg-slate-800 px-2 py-1 rounded border border-slate-700 inline-block text-center">Inv. Ads ÷ N° Clientes</p>
+                    <!-- Hover Tooltip/Fórmula -->
+                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA CAC</p>
+                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Inversión Total MKT<br><span class="text-slate-400">÷</span><br>Nuevos Clientes</p>
                     </div>
                 </div>
 
@@ -152,15 +90,15 @@
                         <div class="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Ticket × Recurrencia</span>
+                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">High Value</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">Valor de Vida (LTV)</h3>
+                    <h3 class="text-sm font-semibold text-slate-500">LTV Estimado</h3>
                     <p class="text-3xl font-bold text-slate-900 mt-1">$390.00</p>
                     
-                    <div class="absolute inset-0 bg-slate-900 p-6 flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-[10px] font-bold text-emerald-400 mb-1">¿QUÉ SIGNIFICA?</p>
-                        <p class="text-xs text-slate-300 mb-3">La ganancia total proyectada que un cliente nos dejará durante todo el tiempo que sea leal a la marca.</p>
-                        <p class="text-xs font-mono text-white bg-slate-800 px-2 py-1 rounded border border-slate-700 inline-block text-center">Ticket Prom. × Meses</p>
+                    <!-- Hover Tooltip/Fórmula -->
+                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA LTV</p>
+                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Valor Ticket ($6.50)<br><span class="text-slate-400">×</span><br>Recurrencia Vida (Meses)</p>
                     </div>
                 </div>
 
@@ -170,14 +108,15 @@
                         <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Cuota de Mercado</span>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">Obj. Año 1</span>
                     </div>
                     <h3 class="text-sm font-semibold text-slate-500">Market Share (LA)</h3>
                     <p class="text-3xl font-bold text-slate-900 mt-1">2.5%</p>
                     
-                    <div class="absolute inset-0 bg-slate-900 p-6 flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-[10px] font-bold text-emerald-400 mb-1">¿QUÉ SIGNIFICA?</p>
-                        <p class="text-xs text-slate-300 mb-3">La porción del "pastel" que nos pertenece dentro de todas las ventas de quinua en supermercados de Los Ángeles.</p>
+                    <!-- Hover Tooltip/Fórmula -->
+                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA SHARE</p>
+                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">(Nuestras Ventas LA)<br><span class="text-slate-400">÷</span><br>(Ventas Totales LA) * 100</p>
                     </div>
                 </div>
 
@@ -187,14 +126,15 @@
                         <div class="p-2 bg-amber-50 rounded-lg text-amber-600">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Eficiencia Publicitaria</span>
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Eficiencia</span>
                     </div>
-                    <h3 class="text-sm font-semibold text-slate-500">Retorno (ROAS)</h3>
+                    <h3 class="text-sm font-semibold text-slate-500">ROAS Publicitario</h3>
                     <p class="text-3xl font-bold text-slate-900 mt-1">3.2x</p>
                     
-                    <div class="absolute inset-0 bg-slate-900 p-6 flex flex-col justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p class="text-[10px] font-bold text-emerald-400 mb-1">¿QUÉ SIGNIFICA?</p>
-                        <p class="text-xs text-slate-300 mb-3">Retorno de Inversión Publicitaria. Por cada dólar que invertimos en Facebook/Amazon Ads, recuperamos $3.20 en ventas.</p>
+                    <!-- Hover Tooltip/Fórmula -->
+                    <div class="absolute inset-0 bg-slate-900/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p class="text-xs font-bold text-emerald-400 mb-2">FÓRMULA ROAS</p>
+                        <p class="text-sm font-mono text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700">Ingresos por Ads<br><span class="text-slate-400">÷</span><br>Costo de Ads</p>
                     </div>
                 </div>
             </div>
@@ -202,73 +142,82 @@
 
         <!-- B. MAPA DEL CLIENTE (Interactivo) -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-            <div class="mb-8">
-                <h2 class="text-xl font-bold text-slate-900">Customer Journey Map</h2>
-                <p class="text-sm text-slate-500 mt-1">Identificación de canales y puntos de fricción (Saponina) en el viaje del consumidor B2C.</p>
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Customer Journey Map</h2>
+                    <p class="text-sm text-slate-500 mt-1">Haz clic en cada etapa para revelar la Card de Táctica.</p>
+                </div>
             </div>
 
             <!-- Flujo Visual -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-                <button onclick="updateJourney('conciencia')" id="btn-conciencia" class="journey-btn border-emerald-600 bg-emerald-50 shadow-sm w-full md:w-1/4 p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 mb-3 shadow-sm border border-emerald-100">
+                <!-- Conciencia -->
+                <button onclick="updateJourney('conciencia')" id="btn-conciencia" class="journey-btn journey-active w-full md:w-1/4 p-4 rounded-xl border border-slate-200 transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-600 mb-3 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </div>
                     <span class="font-bold text-slate-800">1. Conciencia</span>
+                    <span class="text-xs text-slate-500 mt-1">Descubrimiento</span>
                 </button>
                 
+                <!-- Separador -->
                 <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
 
-                <button onclick="updateJourney('consideracion')" id="btn-consideracion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 mb-3">
+                <!-- Consideración -->
+                <button onclick="updateJourney('consideracion')" id="btn-consideracion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 mb-3 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                     </div>
                     <span class="font-bold text-slate-800">2. Consideración</span>
+                    <span class="text-xs text-slate-500 mt-1">Evaluación</span>
                 </button>
 
+                <!-- Separador -->
                 <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
 
-                <button onclick="updateJourney('conversion')" id="btn-conversion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-amber-600 mb-3">
+                <!-- Conversión -->
+                <button onclick="updateJourney('conversion')" id="btn-conversion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-amber-100 group-hover:text-amber-600 mb-3 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
                     <span class="font-bold text-slate-800">3. Conversión</span>
+                    <span class="text-xs text-slate-500 mt-1">Compra</span>
                 </button>
 
+                <!-- Separador -->
                 <div class="hidden md:block w-8 border-t-2 border-dashed border-slate-300"></div>
 
-                <button onclick="updateJourney('fidelizacion')" id="btn-fidelizacion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border-2 border-slate-100 hover:border-slate-300 bg-white transition-all duration-300 flex flex-col items-center text-center group">
-                    <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-rose-600 mb-3">
+                <!-- Fidelización -->
+                <button onclick="updateJourney('fidelizacion')" id="btn-fidelizacion" class="journey-btn w-full md:w-1/4 p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all duration-300 flex flex-col items-center text-center group">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 group-hover:bg-rose-100 group-hover:text-rose-600 mb-3 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </div>
                     <span class="font-bold text-slate-800">4. Fidelización</span>
+                    <span class="text-xs text-slate-500 mt-1">Recompra & NPS</span>
                 </button>
             </div>
 
-            <!-- Card Táctica (Inyectada por JS) -->
-            <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 min-h-[160px]" id="journey-card"></div>
+            <!-- Card de Táctica Dinámica -->
+            <div class="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 min-h-[160px]" id="journey-card">
+                <!-- Se inyecta por JS -->
+            </div>
         </section>
 
-        <!-- C. 9Ps MARKETING MIX (Con Fondos Dinámicos e Imágenes Propias) -->
+        <!-- C. 9Ps MARKETING MIX (Deep Navigation con Imágenes Dinámicas) -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="grid grid-cols-1 md:grid-cols-4">
-                <!-- Panel Pestañas Verticales -->
-                <div class="md:col-span-1 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto no-scrollbar relative z-10">
-                    <div class="p-4 hidden md:block border-b border-slate-200 bg-white">
-                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest">Matriz 9Ps: El Viaje del Grano</h3>
+                <!-- Panel Pestañas -->
+                <div class="md:col-span-1 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto no-scrollbar z-20">
+                    <div class="p-4 hidden md:block border-b border-slate-200">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Matriz Táctica</h3>
                     </div>
+                    <!-- Generado por JS -->
                     <div id="tabs-container" class="flex md:flex-col w-full"></div>
                 </div>
-                <!-- Contenido Dinámico (Aquí cambia el background image) -->
-                <div class="md:col-span-3 bg-slate-100 relative min-h-[350px] transition-all duration-500 bg-cover bg-center" id="tab-bg-container">
-                    <!-- Capa para oscurecer/aclarar la imagen de fondo y permitir lectura -->
-                    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
-                    
-                    <!-- Tarjeta de Contenido Glassmorphism -->
-                    <div class="relative z-10 p-6 sm:p-10 h-full flex flex-col justify-center">
-                        <div class="bg-white/95 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/50" id="tab-content">
-                            <!-- Se inyecta por JS -->
-                        </div>
-                    </div>
+                
+                <!-- Contenido Pestaña (Fondo Dinámico) -->
+                <div class="md:col-span-3 relative min-h-[450px] overflow-hidden bg-slate-900" id="tab-content">
+                    <!-- Se inyecta por JS -->
                 </div>
             </div>
         </section>
@@ -278,66 +227,66 @@
             <!-- Tabla Responsiva -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                 <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
-                    <h2 class="text-lg font-bold text-slate-900">Retail Benchmarking (Los Ángeles)</h2>
-                    <p class="text-xs text-slate-500 mt-1">Comparativa B2C de precios en USD por bolsa de 16oz.</p>
+                    <h2 class="text-lg font-bold text-slate-900">Retail Benchmarking (LA)</h2>
+                    <p class="text-xs text-slate-500 mt-1">Comparativa de precios B2C en USD (16oz)</p>
                 </div>
                 <div class="overflow-x-auto flex-grow">
                     <table class="w-full text-left text-sm whitespace-nowrap">
                         <thead class="bg-white text-slate-400 font-semibold uppercase text-[10px] tracking-widest border-b border-slate-200">
                             <tr>
-                                <th class="px-6 py-4">Competidor / Marca</th>
-                                <th class="px-6 py-4">Precio (USD)</th>
-                                <th class="px-6 py-4">Posicionamiento</th>
+                                <th class="px-6 py-4">Marca</th>
+                                <th class="px-6 py-4">Precio</th>
+                                <th class="px-6 py-4">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-600">
-                            <tr class="bg-emerald-50 hover:bg-emerald-100 transition">
-                                <td class="px-6 py-4 font-bold text-emerald-800 flex items-center gap-2">
+                            <tr class="bg-emerald-50/30 hover:bg-emerald-50 transition">
+                                <td class="px-6 py-4 font-bold text-emerald-700 flex items-center gap-2">
                                     <div class="w-2 h-2 rounded-full bg-emerald-500"></div> Andean Pure Grains
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-900">$6.50</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-bold bg-emerald-200 text-emerald-800 rounded shadow-sm">NUESTRO PRODUCTO</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded">NUESTRA MARCA</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-6 py-4 font-medium">Alter Eco</td>
                                 <td class="px-6 py-4">$8.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Premium Costoso</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Premium</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-6 py-4 font-medium">Lundberg</td>
                                 <td class="px-6 py-4">$7.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Sector Medio-Alto</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Medio</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-6 py-4 font-medium">Bob's Red Mill</td>
                                 <td class="px-6 py-4">$7.49</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Tradicional Masivo</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Medio</span></td>
                             </tr>
-                            <tr class="hover:bg-slate-50 transition border-l-4 border-amber-400">
-                                <td class="px-6 py-4 font-medium text-slate-900">Ancient Harvest</td>
-                                <td class="px-6 py-4 font-semibold">$6.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-bold bg-amber-100 text-amber-700 rounded">Competidor Directo</span></td>
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="px-6 py-4 font-medium">Ancient Harvest</td>
+                                <td class="px-6 py-4">$6.99</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Competidor Directo</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-6 py-4 font-medium">Whole Foods 365</td>
                                 <td class="px-6 py-4">$4.99</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Marca Blanca (Retailer)</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Marca Blanca</span></td>
                             </tr>
                             <tr class="hover:bg-slate-50 transition">
                                 <td class="px-6 py-4 font-medium">Trader Joe's</td>
                                 <td class="px-6 py-4">$4.49</td>
-                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Low Cost Orgánico</span></td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 text-[10px] font-medium bg-slate-100 text-slate-500 rounded">Marca Blanca</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Bubble Chart (Radios Moderados) -->
+            <!-- Bubble Chart -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
                 <div class="mb-4">
-                    <h2 class="text-lg font-bold text-slate-900">Mapa de Posicionamiento Competitivo</h2>
-                    <p class="text-xs text-slate-500 mt-1">Eje X: Precio | Eje Y: Valor Percibido | Tamaño: Cuota de Mercado. (Radios controlados para legibilidad).</p>
+                    <h2 class="text-lg font-bold text-slate-900">Mapa de Posicionamiento</h2>
+                    <p class="text-xs text-slate-500 mt-1">Eje X: Precio | Eje Y: Calidad Percibida | Tamaño: Cuota Relativa</p>
                 </div>
                 <div class="chart-container flex-grow">
                     <canvas id="bubbleChart"></canvas>
@@ -346,57 +295,55 @@
         </section>
 
         <!-- E. SIMULADOR DE GROWTH & ROI -->
-        <section class="bg-slate-900 rounded-[2rem] shadow-2xl p-1 relative overflow-hidden">
-            <!-- Glow background effect -->
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-[100px] opacity-20 pointer-events-none"></div>
-            
-            <div class="bg-white rounded-[1.8rem] p-6 sm:p-10 relative z-10">
+        <section class="bg-slate-900 rounded-3xl shadow-lg p-1">
+            <div class="bg-white rounded-[23px] p-6 sm:p-10">
                 <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-slate-900 flex items-center gap-3 tracking-tight">
-                        <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                        Simulador SaaS: Growth & Rendimiento
+                    <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                        Simulador SaaS: Growth & ROI
                     </h2>
-                    <p class="text-slate-500 text-sm mt-2 max-w-2xl">Mueve los controles deslizantes para proyectar en tiempo real cómo la mejora de la conversión (CX) o la fidelización impactan el Costo de Adquisición (CAC) y el Ratio de Vida del Cliente (LTV).</p>
+                    <p class="text-slate-500 text-sm">Calculadora en tiempo real para proyectar rentabilidad (LTV/CAC) de campañas digitales.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     
-                    <!-- Controles / Sliders -->
+                    <!-- Controles (Sliders) -->
                     <div class="lg:col-span-5 space-y-6">
-                        <!-- Inversión -->
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
-                            <div class="flex justify-between mb-3">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Inversión MKT Digital ($)</label>
-                                <span id="val-inv" class="text-sm font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">$2,000</span>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-600 uppercase">Inversión MKT ($)</label>
+                                <span id="val-inv" class="text-sm font-bold text-slate-900">$2,000</span>
                             </div>
-                            <input type="range" id="inv-marketing" min="500" max="15000" step="100" value="2000" oninput="updateSimulator()">
+                            <input type="range" id="inv-marketing" min="500" max="20000" step="100" value="2000" oninput="updateSimulator()">
                         </div>
                         
-                        <!-- Clics -->
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
-                            <div class="flex justify-between mb-3">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Tráfico Web (Clics)</label>
-                                <span id="val-clicks" class="text-sm font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">5,000</span>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-600 uppercase">Tráfico (Clics)</label>
+                                <span id="val-clicks" class="text-sm font-bold text-slate-900">5,000</span>
                             </div>
-                            <input type="range" id="clicks" min="1000" max="30000" step="500" value="5000" oninput="updateSimulator()">
+                            <input type="range" id="clicks" min="1000" max="50000" step="500" value="5000" oninput="updateSimulator()">
                         </div>
 
-                        <!-- Tasa de Conversión -->
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-inner">
-                            <div class="flex justify-between mb-3">
-                                <label class="text-xs font-bold text-slate-600 uppercase">Tasa de Conversión (%)</label>
-                                <span id="val-conv" class="text-sm font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">2.5%</span>
+                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-600 uppercase">Tasa Conversión (%)</label>
+                                <span id="val-conv" class="text-sm font-bold text-slate-900">2.5%</span>
                             </div>
-                            <input type="range" id="conv-rate" min="0.5" max="8" step="0.1" value="2.5" oninput="updateSimulator()">
+                            <input type="range" id="conv-rate" min="0.5" max="10" step="0.1" value="2.5" oninput="updateSimulator()">
                         </div>
 
-                        <!-- Ticket y Vida -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="text-[10px] font-bold text-slate-500 uppercase block mb-2">Valor Venta (Fijo)</label>
-                                <div class="font-bold text-slate-900 text-lg">$6.50</div>
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase">Valor Venta</label>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400">$</span>
+                                    <input type="number" id="val-venta" value="6.50" step="0.1" class="w-full bg-transparent font-bold text-slate-900 outline-none" oninput="updateSimulator()">
+                                </div>
                             </div>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-inner">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                 <div class="flex justify-between mb-2">
                                     <label class="text-[10px] font-bold text-slate-500 uppercase">Meses Vida</label>
                                     <span id="val-rec-display" class="text-xs font-bold text-slate-900">6</span>
@@ -406,42 +353,42 @@
                         </div>
                     </div>
 
-                    <!-- Gráficos de Salida -->
+                    <!-- Gráficos y Resultados -->
                     <div class="lg:col-span-7 flex flex-col gap-6">
                         <!-- Score Cards -->
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="p-5 border border-slate-200 rounded-xl flex items-center justify-between shadow-sm bg-white">
+                            <div class="p-4 border border-slate-200 rounded-xl flex items-center justify-between">
                                 <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CAC Resultante</p>
-                                    <p id="out-cac" class="text-3xl font-black text-slate-800 mt-1 tracking-tight">$16.00</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">CAC Real</p>
+                                    <p id="out-cac" class="text-2xl font-bold text-slate-900 mt-1">$16.00</p>
                                 </div>
-                                <div id="cac-status" class="w-4 h-4 rounded-full"></div>
+                                <div id="cac-status" class="w-3 h-3 rounded-full bg-amber-500"></div>
                             </div>
-                            <div class="p-5 border-2 border-emerald-500 bg-emerald-50 rounded-xl flex items-center justify-between shadow-md transform transition-transform hover:scale-105">
+                            <div class="p-4 border border-emerald-200 bg-emerald-50 rounded-xl flex items-center justify-between">
                                 <div>
-                                    <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Valor de Vida (LTV)</p>
-                                    <p id="out-ltv" class="text-3xl font-black text-emerald-600 mt-1 tracking-tight">$39.00</p>
+                                    <p class="text-[10px] font-bold text-emerald-600 uppercase">LTV (Life Time Value)</p>
+                                    <p id="out-ltv" class="text-2xl font-bold text-emerald-700 mt-1">$39.00</p>
                                 </div>
-                                <svg class="w-8 h-8 text-emerald-500 opacity-50" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
+                                <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                             </div>
                         </div>
 
-                        <!-- Gráficos Chart.js -->
+                        <!-- Charts Area -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-                            <div class="border border-slate-100 bg-slate-50 rounded-xl p-5 flex flex-col shadow-inner">
-                                <p class="text-xs font-bold text-slate-500 text-center mb-4 uppercase tracking-wider">Costo vs Retorno Potencial</p>
+                            <div class="border border-slate-100 rounded-xl p-4 flex flex-col">
+                                <p class="text-xs font-semibold text-slate-500 text-center mb-2">Inversión vs Retorno LTV</p>
                                 <div class="flex-grow relative">
                                     <canvas id="barChart"></canvas>
                                 </div>
                             </div>
-                            <div class="border border-slate-100 bg-slate-50 rounded-xl p-5 flex flex-col items-center justify-center relative shadow-inner">
-                                <p class="text-xs font-bold text-slate-500 text-center mb-4 uppercase tracking-wider">Ratio de Salud (LTV / CAC)</p>
+                            <div class="border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center relative">
+                                <p class="text-xs font-semibold text-slate-500 text-center mb-2">Ratio LTV / CAC</p>
                                 <div class="chart-gauge">
                                     <canvas id="gaugeChart"></canvas>
                                 </div>
-                                <div class="absolute inset-0 flex flex-col items-center justify-center mt-10 pointer-events-none">
-                                    <span id="out-ratio" class="text-4xl font-black text-slate-900 tracking-tighter drop-shadow-sm">2.4x</span>
-                                    <span class="text-[10px] text-slate-400 font-semibold mt-1 bg-white px-2 py-0.5 rounded-full border border-slate-200">Target > 3.0x</span>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center mt-6 pointer-events-none">
+                                    <span id="out-ratio" class="text-3xl font-extrabold text-slate-900">2.4x</span>
+                                    <span class="text-[10px] text-slate-400">Target > 3.0x</span>
                                 </div>
                             </div>
                         </div>
@@ -452,240 +399,262 @@
 
     </main>
 
-    <!-- F. CRÉDITOS 100% -->
+    <!-- F. CRÉDITOS Y FOOTER -->
     <footer class="bg-white border-t border-slate-200 py-12 mt-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center md:text-left w-full md:w-3/4">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-5">Equipo Desarrollador del Proyecto al 100%</p>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3 text-sm font-medium text-slate-700">
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Gianella Armas Cana</div>
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Rosamía Céspedes Durand</div>
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Paola Mamani Sanchez</div>
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Marilin Medina Apolinario</div>
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Eric Mozombite Shishco</div>
-                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-md border border-slate-100"><div class="w-2 h-2 rounded-full bg-emerald-500"></div>Tamia Obregón Espinoza</div>
-                    </div>
+                <div class="text-center md:text-left">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4">Equipo Desarrollador 100%</p>
+                    <ul class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3 text-sm font-medium text-slate-600">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Gianella Armas Cana</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Rosamía Céspedes Durand</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Paola Mamani Sanchez</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Marilin Medina Apolinario</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Eric Mozombite Shishco</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>Tamia Obregón Espinoza</li>
+                    </ul>
                 </div>
-                <div class="text-right flex flex-col items-center md:items-end w-full md:w-1/4">
-                    <div class="text-sm font-bold text-slate-300 tracking-widest uppercase">ADEX ESCUELA</div>
-                    <div class="text-xs text-slate-400 mt-1">Simulación BI & Analytics 2026</div>
+                <div class="text-right flex flex-col items-center md:items-end">
+                    <div class="text-xs font-mono text-slate-400">ADEX Escuela | BI & Analytics</div>
+                    <div class="text-xs text-slate-400 mt-1">© 2026 Andean Pure Grains. Todos los derechos reservados.</div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- LOGICA JS -->
+    <!-- LÓGICA DE NEGOCIO Y RENDERIZADO (Vanilla JS) -->
     <script>
-        // Toggle Presenter Mode
-        function togglePresenterMode() {
-            const panel = document.getElementById('presenter-panel');
-            const overlay = document.getElementById('presenter-overlay');
-            if (panel.classList.contains('slide-over-closed')) {
-                panel.classList.remove('slide-over-closed');
-                panel.classList.add('slide-over-open');
-                overlay.classList.remove('hidden');
-            } else {
-                panel.classList.remove('slide-over-open');
-                panel.classList.add('slide-over-closed');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        // 1. Customer Journey
+        // --- 1. Customer Journey Logic ---
         const journeyData = {
             conciencia: {
-                title: "Fase de Conciencia", channels: "Instagram Reels (Foodies), Búsqueda SEO Orgánica.", tactic: "Inbound Marketing. Educar sobre que no toda la quinua es igual. Posicionar origen andino.", metric: "Impresiones y Costo por Clic (CPC)."
+                title: "1. Fase de Conciencia",
+                channels: "Instagram Reels (Foodies), Búsqueda SEO 'Plant-based protein'.",
+                tactic: "Estrategia de contenidos (Inbound) enfocada en beneficios nutricionales y origen andino.",
+                metric: "Impresiones y Clics (CTR) en RRSS."
             },
             consideracion: {
-                title: "Fase de Consideración", channels: "Amazon (FBA), Foros Reddit (r/EatCheapAndHealthy).", tactic: "Demostrar certificaciones USDA y justificar precio de $6.50 frente a Ancient Harvest.", metric: "Tiempo en página y Tasa de Rebote."
+                title: "2. Fase de Consideración",
+                channels: "Página de Amazon, Reseñas, Comparativa de precios en Whole Foods.",
+                tactic: "Destacar certificaciones USDA Organic y justificar el precio competitivo ($6.50).",
+                metric: "Tasa de rebote, Tiempo en página de producto."
             },
             conversion: {
-                title: "Fase de Conversión", channels: "Checkout eCommerce, Estantes Whole Foods.", tactic: "Eliminar fricción de compra. Envío gratis en D2C para primera compra.", metric: "Tasa de Conversión (%) y CAC."
+                title: "3. Fase de Conversión",
+                channels: "Checkout Amazon FBA o e-commerce propio D2C.",
+                tactic: "Fricción cero: envío rápido (Prime) y garantía de calidad. Promoción de primer envío gratis.",
+                metric: "Tasa de Conversión (Target 2.5%), Costo de Adquisición (CAC)."
             },
             fidelizacion: {
-                title: "Fase de Fidelización (Crítica)", channels: "Empaque Físico, Email Post-Venta.", tactic: "FRICCIÓN RESUELTA: Instrucciones claras en empaque para evitar amargor (saponina). Fomenta suscripción.", metric: "Life Time Value (LTV) y NPS."
+                title: "4. Fase de Fidelización",
+                channels: "Email Marketing, Programa 'Subscribe & Save', Unboxing Experience.",
+                tactic: "Incluir tarjeta de preparación (eliminar fricción de sabor amargo). Recetas mensuales.",
+                metric: "Life Time Value (LTV), Net Promoter Score (NPS), Churn Rate."
             }
         };
 
         function updateJourney(stepId) {
-            document.querySelectorAll('.journey-btn').forEach(btn => {
-                btn.classList.remove('border-emerald-600', 'bg-emerald-50', 'shadow-sm');
-                btn.classList.add('border-slate-100', 'bg-white');
-                btn.querySelector('div').classList.remove('text-emerald-600', 'border-emerald-100', 'bg-white');
-                btn.querySelector('div').classList.add('text-slate-400', 'bg-slate-50', 'border-transparent');
-            });
-            
-            const activeBtn = document.getElementById('btn-' + stepId);
-            activeBtn.classList.add('border-emerald-600', 'bg-emerald-50', 'shadow-sm');
-            activeBtn.classList.remove('border-slate-100', 'bg-white');
-            activeBtn.querySelector('div').classList.add('text-emerald-600', 'bg-white', 'border-emerald-100');
-            activeBtn.querySelector('div').classList.remove('text-slate-400', 'bg-slate-50', 'border-transparent');
+            // Update UI buttons
+            document.querySelectorAll('.journey-btn').forEach(btn => btn.classList.remove('journey-active'));
+            document.getElementById('btn-' + stepId).classList.add('journey-active');
 
+            // Render Card
             const data = journeyData[stepId];
-            document.getElementById('journey-card').innerHTML = `
+            const card = document.getElementById('journey-card');
+            card.innerHTML = `
                 <div class="fade-in h-full flex flex-col justify-center">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-200 pb-2">${data.title}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white p-4 rounded border border-slate-100 shadow-sm"><span class="block text-[10px] font-bold text-emerald-600 uppercase mb-1">Estrategia</span><p class="text-sm text-slate-700">${data.tactic}</p></div>
-                        <div class="bg-white p-4 rounded border border-slate-100 shadow-sm"><span class="block text-[10px] font-bold text-indigo-600 uppercase mb-1">Canales</span><p class="text-sm text-slate-700">${data.channels}</p></div>
-                        <div class="bg-white p-4 rounded border border-slate-100 shadow-sm"><span class="block text-[10px] font-bold text-amber-600 uppercase mb-1">Métrica (KPI)</span><p class="text-sm font-semibold text-slate-900">${data.metric}</p></div>
+                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Táctica Base</span><p class="text-sm text-slate-700 font-medium">${data.tactic}</p></div>
+                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Canales Clave</span><p class="text-sm text-slate-600">${data.channels}</p></div>
+                        <div><span class="block text-[10px] font-bold text-slate-400 uppercase mb-1">KPI a Medir</span><p class="text-sm font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 inline-block rounded">${data.metric}</p></div>
                     </div>
                 </div>
             `;
         }
 
-        // 2. 9Ps con Fondos de Imagen (Storytelling adaptado)
+        // --- 2. 9Ps Marketing Mix Logic con Imágenes Dinámicas ---
         const mix9Ps = [
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG", name: "1. Producto", titulo: "El Origen: Quinua Libre de Saponina", texto: "Todo empieza en los Andes. Nuestro producto no es un commodity, es quinua orgánica (Blanca y Tricolor) pre-lavada, libre de la saponina que causa amargor, certificada USDA Organic. Resolviendo la fricción #1 del mercado estadounidense.", kpi: "Devoluciones < 1%" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/2P_Precio.png", name: "2. Precio", titulo: "Valor Justo en el Mercado B2C", texto: "El mercado demanda transparencia. Fijamos el precio retail en $6.50 (bolsa 16oz). Esto nos posiciona estratégicamente debajo de Alter Eco ($8.99) pero demostrando mayor valor percibido que las marcas blancas ($4.99).", kpi: "Margen Bruto de 45%" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/3P_Plaza.png", name: "3. Plaza", titulo: "Conquista de la Costa Oeste", texto: "Ingresamos por el puerto de Long Beach, enfocándonos omnicanalmente en Los Ángeles. Distribuiremos en Amazon FBA para venta directa y buscaremos posicionamiento en retailers enfocados en bienestar como Whole Foods.", kpi: "Rotación Inventario FBA" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/4P_Promocion.png", name: "4. Promoción", titulo: "Inbound Marketing y Wellness", texto: "Nuestra promoción no es invasiva. Educamos. Usamos TikTok y micro-influencers de 'Plant-Based Proteins' para enseñar a preparar la quinua y contar la historia de las comunidades andinas que la cosechan.", kpi: "ROAS de 3.2x" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/5P_Personas.png", name: "5. Personas", titulo: "Comunidades y Equipo Bilingüe", texto: "Detrás de la marca hay agricultores peruanos trabajando bajo comercio justo y un equipo de Customer Experience (CX) preparado para atender consultas del exigente mercado anglosajón.", kpi: "Score de Comercio Justo" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/6P_Procesos.png", name: "6. Procesos", titulo: "Trazabilidad Tecnológica", texto: "Los procesos garantizan calidad continua. Implementamos un sistema de trazabilidad donde el consumidor puede escanear un QR para ver los certificados de lavado y el origen orgánico de su lote.", kpi: "Tiempo de Certificación" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/7P_Evidencia_F%C3%ADsica.png", name: "7. Evid. Física", titulo: "Empaque Doypack que Educa", texto: "El empaque (presencia física) es nuestra mejor valla publicitaria. Usamos un diseño Doypack resellable, ecológico y con instrucciones infalibles de preparación para evitar la mala experiencia de consumo.", kpi: "Score de Diseño UI/UX" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/8P_Alianzas.png", name: "8. Alianzas", titulo: "Partners Logísticos y Comerciales", texto: "Ninguna empresa sobrevive sola en USA. Hemos diseñado alianzas estratégicas con operadores de fulfillment en California para garantizar entregas en 48 horas (Prime standard).", kpi: "On-Time Delivery > 98%" },
-            { img: "https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/9P%2BProp%C3%B3sito.png", name: "9. Propósito", titulo: "Impacto y Sostenibilidad", texto: "La novena P eleva el negocio. Nuestro propósito es nutrir a Estados Unidos mientras elevamos la productividad y la economía circular de los valles andinos, asegurando crecimiento sostenido.", kpi: "Impacto ESG" }
+            { id: 'p1', name: 'Producto', estrategia: 'Quinua orgánica (Blanca/Tricolor) pre-lavada, certificada USDA Organic y libre de saponina.', metrica: 'Tasa de devoluciones < 1%', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG' },
+            { id: 'p2', name: 'Precio', estrategia: 'Penetración premium. Retail price fijado en $6.50 (16oz) para ganar share frente a Ancient Harvest ($6.99).', metrica: 'Margen Bruto > 45%', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/2P_Precio.png' },
+            { id: 'p3', name: 'Plaza', estrategia: 'Venta inicial D2C vía Amazon FBA en la costa oeste (Los Ángeles, CA).', metrica: 'Velocidad de inventario (FBA)', estado: 'En proceso', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/3P_Plaza.png' },
+            { id: 'p4', name: 'Promoción', estrategia: 'Ads en Instagram/TikTok enfocados en nichos veganos y fitness. Micro-influencers.', metrica: 'ROAS > 3.0', estado: 'Planificado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/4P_Promocion.png' },
+            { id: 'p5', name: 'Personas', estrategia: 'Equipo de soporte bilingüe (CX) y programa de comercio justo con agricultores.', metrica: 'NPS de Empleados/Socios', estado: 'Implementado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/5P_Personas.png' },
+            { id: 'p6', name: 'Procesos', estrategia: 'Trazabilidad con código QR en empaque para ver el origen exacto del grano.', metrica: 'Tiempo ciclo de exportación', estado: 'En diseño', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/6P_Procesos.png' },
+            { id: 'p7', name: 'Evidencia Física', estrategia: 'Empaque Doypack ecológico (kraft/biodegradable) con cierre hermético (ziploc).', metrica: 'Score de Empaque (UX)', estado: 'Prototipo', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/7P_Evidencia_F%C3%ADsica.png' },
+            { id: 'p8', name: 'Alianzas', estrategia: 'Alianzas con distribuidores boutique en LA y ONG agrícolas en Perú.', metrica: 'Volumen via Partners', estado: 'En negociación', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/8P_Alianzas.png' },
+            { id: 'p9', name: 'Propósito', estrategia: 'Empoderar a comunidades andinas mediante comercio justo y ofrecer agricultura 100% regenerativa.', metrica: 'Impacto Social (Familias)', estado: 'Validado', image: 'https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/9P%2BProp%C3%B3sito.png' }
         ];
 
         function render9PsTabs() {
             const container = document.getElementById('tabs-container');
             mix9Ps.forEach((p, index) => {
                 const btn = document.createElement('button');
-                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors border-b border-slate-100 md:border-b-0 ${index === 0 ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50'}`;
-                btn.innerText = p.name;
+                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors ${index === 0 ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50 border-b border-slate-100 md:border-b-0'}`;
+                btn.innerText = `P${index+1}. ${p.name}`;
                 btn.onclick = () => update9Ps(index);
                 container.appendChild(btn);
             });
-            update9Ps(0);
+            update9Ps(0); // Init
         }
 
         function update9Ps(index) {
+            // Actualizar botones UI
             document.querySelectorAll('.p-tab-btn').forEach((btn, i) => {
-                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors border-b border-slate-100 md:border-b-0 ${i === index ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50'}`;
+                btn.className = `p-tab-btn w-full text-left px-6 py-4 text-sm transition-colors ${i === index ? 'tab-active' : 'tab-inactive bg-white hover:bg-slate-50 border-b border-slate-100 md:border-b-0'}`;
             });
             
             const data = mix9Ps[index];
-            const bgContainer = document.getElementById('tab-bg-container');
             const content = document.getElementById('tab-content');
             
-            // Cambiar imagen de fondo dinámicamente
-            bgContainer.style.backgroundImage = `url('${data.img}')`;
+            let statusColor = data.estado === 'Implementado' || data.estado === 'Validado' ? 'text-emerald-700 bg-emerald-100' : 
+                              data.estado === 'En proceso' ? 'text-indigo-700 bg-indigo-100' : 'text-amber-700 bg-amber-100';
 
-            // Actualizar textos
+            // HTML Estructurado para Imagen (80%) + Tarjeta (60% Glassmorphism)
             content.innerHTML = `
-                <div class="fade-in">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">${data.titulo}</h3>
-                        <span class="px-3 py-1 text-xs font-bold text-white bg-emerald-600 rounded-full shadow-md inline-block text-center whitespace-nowrap">KPI: ${data.kpi}</span>
+                <!-- Capa del Fondo (Imagen al 80% de opacidad) -->
+                <div class="absolute inset-0 z-0 transition-all duration-500 ease-in-out" style="background-image: url('${data.image}'); background-size: cover; background-position: center; opacity: 0.8;"></div>
+                
+                <!-- Contenedor Principal Absoluto -->
+                <div class="relative z-10 p-6 sm:p-10 w-full h-full min-h-[450px] flex flex-col justify-center">
+                    
+                    <!-- Ficha (Card) con 60% de opacidad blanca (bg-white/60) y filtro de desenfoque -->
+                    <div class="fade-in bg-white/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/60 shadow-2xl w-full max-w-2xl">
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-3xl font-extrabold text-slate-900 drop-shadow-sm">${data.name}</h3>
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-full ${statusColor} shadow-sm backdrop-blur-sm bg-white/80 border border-white/50">${data.estado}</span>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-[11px] font-extrabold text-slate-800 uppercase tracking-widest mb-2 drop-shadow-sm">Estrategia Táctica</p>
+                                <p class="text-slate-900 font-medium leading-relaxed bg-white/50 p-4 rounded-xl border border-white/40 shadow-sm">${data.estrategia}</p>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-extrabold text-slate-800 uppercase tracking-widest mb-2 drop-shadow-sm">Métrica de Éxito (KPI)</p>
+                                <p class="text-slate-900 font-bold flex items-center gap-2 bg-white/50 p-4 rounded-xl border border-white/40 shadow-sm">
+                                    <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    ${data.metrica}
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
-                    <p class="text-slate-700 leading-relaxed text-base font-medium">${data.texto}</p>
                 </div>
             `;
         }
 
-        // 3. Gráficos (Chart.js)
+        // --- 3. Charts Initialization (Chart.js) ---
         let bubbleInstance, barInstance, gaugeInstance;
+
         function initCharts() {
-            // Bubble Chart (Restricción de radios controlados para no saturar)
+            // A. Bubble Chart (Benchmarking)
             const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
             bubbleInstance = new Chart(ctxBubble, {
                 type: 'bubble',
                 data: {
                     datasets: [
-                        { label: 'Andean Pure Grains ($6.50)', data: [{x: 6.50, y: 9.0, r: 12}], backgroundColor: 'rgba(5, 150, 105, 0.9)', borderColor: '#047857', borderWidth: 2 },
-                        { label: 'Alter Eco ($8.99)', data: [{x: 8.99, y: 9.5, r: 8}], backgroundColor: 'rgba(100, 116, 139, 0.6)' },
-                        { label: 'Lundberg ($7.99)', data: [{x: 7.99, y: 8.5, r: 10}], backgroundColor: 'rgba(100, 116, 139, 0.6)' },
-                        { label: 'Bob\'s Red Mill ($7.49)', data: [{x: 7.49, y: 8.0, r: 14}], backgroundColor: 'rgba(100, 116, 139, 0.6)' },
-                        { label: 'Ancient Harvest ($6.99)', data: [{x: 6.99, y: 7.5, r: 16}], backgroundColor: 'rgba(245, 158, 11, 0.8)' }, // Competencia Directa (Amber)
-                        { label: 'Whole Foods 365 ($4.99)', data: [{x: 4.99, y: 6.0, r: 18}], backgroundColor: 'rgba(203, 213, 225, 0.6)' },
-                        { label: 'Trader Joe\'s ($4.49)', data: [{x: 4.49, y: 6.5, r: 18}], backgroundColor: 'rgba(203, 213, 225, 0.6)' }
+                        { label: 'Andean Pure Grains ($6.50)', data: [{x: 6.50, y: 9.0, r: 15}], backgroundColor: 'rgba(5, 150, 105, 0.8)', borderColor: '#047857', borderWidth: 2 }, // Dorado/Verde (Emerald)
+                        { label: 'Alter Eco ($8.99)', data: [{x: 8.99, y: 9.5, r: 8}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
+                        { label: 'Lundberg ($7.99)', data: [{x: 7.99, y: 8.5, r: 10}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
+                        { label: 'Bob\'s Red Mill ($7.49)', data: [{x: 7.49, y: 8.0, r: 16}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
+                        { label: 'Ancient Harvest ($6.99)', data: [{x: 6.99, y: 7.5, r: 18}], backgroundColor: 'rgba(100, 116, 139, 0.5)' },
+                        { label: 'Whole Foods 365 ($4.99)', data: [{x: 4.99, y: 6.0, r: 22}], backgroundColor: 'rgba(203, 213, 225, 0.6)' },
+                        { label: 'Trader Joe\'s ($4.49)', data: [{x: 4.49, y: 6.5, r: 20}], backgroundColor: 'rgba(203, 213, 225, 0.6)' }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
-                        x: { title: { display: true, text: 'Precio Retail en USD ($)' }, min: 4, max: 10, grid: { color: '#f8fafc' } },
-                        y: { title: { display: true, text: 'Calidad & Propuesta de Valor' }, min: 5, max: 10, grid: { color: '#f8fafc' } }
+                        x: { title: { display: true, text: 'Precio Retail en USD ($)' }, min: 4, max: 10, grid: { color: '#f1f5f9' } },
+                        y: { title: { display: true, text: 'Calidad / Valor Percibido (1-10)' }, min: 5, max: 10, grid: { color: '#f1f5f9' } }
                     },
                     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, usePointStyle: true } } }
                 }
             });
 
-            // Bar Chart (Simulador)
+            // B. Bar Chart (Simulator)
             const ctxBar = document.getElementById('barChart').getContext('2d');
             barInstance = new Chart(ctxBar, {
                 type: 'bar',
-                data: { labels: ['Costo Adquisición', 'Valor de Vida (Retorno)'], datasets: [{ data: [16, 39], backgroundColor: ['#94a3b8', '#10b981'], borderRadius: 6 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.raw.toFixed(2) } } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
+                data: { labels: ['Inversión Ads', 'Ingreso Proyectado'], datasets: [{ data: [2000, 0], backgroundColor: ['#cbd5e1', '#059669'], borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.raw.toLocaleString() } } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } }
             });
 
-            // Gauge Chart (Doughnut)
+            // C. Gauge Chart (Half Doughnut for Ratio)
             const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
             gaugeInstance = new Chart(ctxGauge, {
                 type: 'doughnut',
-                data: { labels: ['Ratio Actual', 'Restante al Target'], datasets: [{ data: [2.4, 0.6], backgroundColor: ['#10b981', '#e2e8f0'], borderWidth: 0 }] },
-                options: { circumference: 180, rotation: 270, cutout: '82%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 0 } } // Sin animación para que el slider sea instantáneo
+                data: { labels: ['Ratio Actual', 'Restante al Target'], datasets: [{ data: [1, 2], backgroundColor: ['#10b981', '#f1f5f9'], borderWidth: 0 }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    circumference: 180, rotation: 270, cutout: '80%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    animation: { duration: 400 }
+                }
             });
         }
 
-        // 4. Lógica Matemática Simulador Growth
+        // --- 4. Simulator Engine ---
         function updateSimulator() {
+            // Get values
             const inv = parseFloat(document.getElementById('inv-marketing').value);
             const clicks = parseFloat(document.getElementById('clicks').value);
             const convRate = parseFloat(document.getElementById('conv-rate').value) / 100;
-            const valorVenta = 6.50; // Fijo B2C
+            const valorVenta = parseFloat(document.getElementById('val-venta').value) || 0;
             const recurrencia = parseInt(document.getElementById('recurrencia').value);
 
-            // Actualizar UI Inputs
+            // Update UI Labels
             document.getElementById('val-inv').innerText = '$' + inv.toLocaleString();
             document.getElementById('val-clicks').innerText = clicks.toLocaleString();
             document.getElementById('val-conv').innerText = (convRate * 100).toFixed(1) + '%';
             document.getElementById('val-rec-display').innerText = recurrencia;
 
-            // Cálculos Core
+            // Math Logic
             const conversiones = clicks * convRate;
-            let cac = conversiones > 0 ? inv / conversiones : 0;
+            let cac = 0;
+            if (conversiones > 0) cac = inv / conversiones;
             const ltv = valorVenta * recurrencia;
-            let ratio = cac > 0 ? ltv / cac : 0;
+            const ingresosTotales = conversiones * ltv;
+            let ratio = 0;
+            if (cac > 0) ratio = ltv / cac;
 
-            // Actualizar UI Outputs
+            // Update UI Outputs
             document.getElementById('out-cac').innerText = '$' + cac.toFixed(2);
             document.getElementById('out-ltv').innerText = '$' + ltv.toFixed(2);
             document.getElementById('out-ratio').innerText = ratio.toFixed(1) + 'x';
             
-            // Estado visual del CAC
+            // Status Indicators
             const cacStatus = document.getElementById('cac-status');
-            if(cac > valorVenta) { cacStatus.className = 'w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] animate-pulse'; } // CAC mayor que 1ra venta = Alerta
-            else { cacStatus.className = 'w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]'; }
+            if(cac > valorVenta) { cacStatus.className = 'w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]'; } 
+            else { cacStatus.className = 'w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]'; }
 
-            // Estado visual del Ratio
             const ratioText = document.getElementById('out-ratio');
-            if (ratio >= 3) ratioText.className = "text-4xl font-black text-emerald-600 tracking-tighter drop-shadow-sm";
-            else if (ratio >= 1.5) ratioText.className = "text-4xl font-black text-amber-500 tracking-tighter drop-shadow-sm";
-            else ratioText.className = "text-4xl font-black text-rose-500 tracking-tighter drop-shadow-sm";
+            if (ratio >= 3) ratioText.className = "text-3xl font-extrabold text-emerald-600";
+            else if (ratio >= 1) ratioText.className = "text-3xl font-extrabold text-amber-500";
+            else ratioText.className = "text-3xl font-extrabold text-rose-500";
 
-            // Refrescar Gráficos
+            // Update Charts
             if (barInstance) {
-                barInstance.data.datasets[0].data = [cac, ltv];
+                barInstance.data.datasets[0].data = [inv, ingresosTotales];
                 barInstance.update();
             }
             if (gaugeInstance) {
-                const target = 3.0; // Benchmark saludable SaaS/D2C
+                const target = 3.0; // SaaS Standard Target
                 const current = Math.min(ratio, target);
-                const remainder = target - current > 0 ? target - current : 0;
+                const remainder = target - current;
                 
-                let color = '#f43f5e'; // Malo (Rojo)
-                if (ratio >= 3) color = '#10b981'; // Excelente (Verde)
-                else if (ratio >= 1.5) color = '#f59e0b'; // Regular (Ambar)
+                let color = '#f43f5e'; // Red (Bad)
+                if (ratio >= 3) color = '#10b981'; // Green (Excellent)
+                else if (ratio >= 1.5) color = '#f59e0b'; // Yellow (Warning)
 
                 gaugeInstance.data.datasets[0].data = [current, remainder];
-                gaugeInstance.data.datasets[0].backgroundColor = [color, '#e2e8f0'];
+                gaugeInstance.data.datasets[0].backgroundColor = [color, '#f1f5f9'];
                 gaugeInstance.update();
             }
         }
 
-        // Inicio de la Aplicación
+        // --- Boot ---
         window.onload = () => {
             updateJourney('conciencia');
             render9PsTabs();
