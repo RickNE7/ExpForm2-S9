@@ -4,252 +4,320 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BI Dashboard | Andean Pure Grains</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter (SaaS Aesthetic) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        corporate: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
+                        success: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669' },
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .chart-container { position: relative; height: 350px; width: 100%; }
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #4f46e5; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(79, 70, 229, 0.3); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e2e8f0; border-radius: 3px; }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
-        .tab-active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; } /* bg-slate-50 */
+        .saas-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; background-color: #eff6ff; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Sliders SaaS Style */
+        input[type=range] { accent-color: #2563eb; cursor: pointer; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body class="text-slate-800 antialiased min-h-screen pb-12">
 
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <!-- Top Navigation / Header -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">A</div>
-                    <span class="text-lg font-bold tracking-tight text-slate-800">Andean <span class="text-indigo-600">Pure Grains</span></span>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-corporate-600 rounded flex items-center justify-center text-white font-bold shadow-sm">A</div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900">Andean <span class="text-corporate-600">Pure Grains</span></span>
                 </div>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-500">
-                    <a href="#kpis" class="hover:text-indigo-600 transition">Métricas</a>
-                    <a href="#estrategia" class="hover:text-indigo-600 transition">Estrategia 9Ps</a>
-                    <a href="#benchmarking" class="hover:text-indigo-600 transition">Competencia</a>
-                    <a href="#growth" class="hover:text-indigo-600 transition font-semibold text-indigo-600">Simulador ROI</a>
+                <div class="hidden md:flex space-x-6 text-sm font-medium text-slate-500">
+                    <a href="#journey" class="hover:text-corporate-600 transition">Customer Journey</a>
+                    <a href="#kpis" class="hover:text-corporate-600 transition">KPIs</a>
+                    <a href="#estrategia" class="hover:text-corporate-600 transition">Estrategia 9Ps</a>
+                    <a href="#mercado" class="hover:text-corporate-600 transition">Mercado</a>
+                    <a href="#simulador" class="text-corporate-600 font-semibold hover:text-corporate-700 transition">Simulador ROI</a>
                 </div>
-                <div class="text-xs font-mono text-slate-400">v2.0.26 | 2026-1</div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-900">Executive Performance Dashboard</h1>
-                <p class="text-slate-500 mt-1">Exportación de Quinua Orgánica a EE.UU. (Los Ángeles)</p>
-            </div>
-            <div class="flex gap-2">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                    <span class="w-2 h-2 mr-2 bg-emerald-500 rounded-full animate-pulse"></span> Mercado: Activo
-                </span>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                    Exposición Grupal
-                </span>
-            </div>
+        <!-- Header Context -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Executive Intelligence Dashboard</h1>
+            <p class="text-slate-500 mt-2 max-w-3xl text-sm leading-relaxed">
+                Análisis estratégico y modelado competitivo para la exportación de Quinua Orgánica (Partida 1008.50.90.00) al mercado de EE.UU. Norteamérica absorbe el 72% de la cuota regional, proyectando un mercado global de $1,384M para 2032.
+            </p>
         </header>
 
-        <!-- Section 1: Main KPIs -->
-        <section id="kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- ROI -->
-            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">ROI de Inversión CX</p>
-                <div class="flex items-baseline gap-2 mt-2">
-                    <span class="text-3xl font-bold text-slate-800">100%</span>
-                    <span class="text-xs font-semibold text-emerald-600">▲ +12.4%</span>
-                </div>
-                <div class="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div class="bg-emerald-500 h-full w-full"></div>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-2 italic">Beneficio Neto vs Costo de Experiencia</p>
-            </div>
-            <!-- CLV -->
-            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Customer Lifetime Value</p>
-                <div class="flex items-baseline gap-2 mt-2">
-                    <span class="text-3xl font-bold text-slate-800">$1,000</span>
-                    <span class="text-xs font-semibold text-indigo-600">High LTV</span>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-4">Proyección basada en suscripción mensual</p>
-            </div>
-            <!-- CAC -->
-            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Costo Adquisición (CAC)</p>
-                <div class="flex items-baseline gap-2 mt-2">
-                    <span class="text-3xl font-bold text-slate-800">$15.50</span>
-                    <span class="text-xs font-semibold text-amber-600">Optimizar</span>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-4">Promedio por canal digital (LA Retail)</p>
-            </div>
-            <!-- NPS -->
-            <div class="glass-card p-6 rounded-2xl shadow-sm transition-all hover:shadow-md">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Lealtad (NPS)</p>
-                <div class="flex items-baseline gap-2 mt-2">
-                    <span class="text-3xl font-bold text-slate-800">68</span>
-                    <span class="text-xs font-semibold text-indigo-600">Excelente</span>
-                </div>
-                <div class="flex gap-1 mt-4">
-                    <div class="h-1 flex-1 bg-red-400 rounded-full"></div>
-                    <div class="h-1 flex-1 bg-amber-400 rounded-full"></div>
-                    <div class="h-1 flex-1 bg-indigo-500 rounded-full"></div>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-2">Benchmark: Industria Alimentaria USA</p>
-            </div>
-        </section>
-
-        <!-- Section 2: Strategy 9Ps (Modern Tabs) -->
-        <section id="estrategia" class="glass-card rounded-2xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 bg-white/50">
-                <h2 class="text-lg font-bold text-slate-800">Estrategia Táctica 9Ps</h2>
-            </div>
-            <div class="flex overflow-x-auto no-scrollbar border-b border-slate-100 bg-white">
-                <button onclick="switchTab('p1')" id="tab-p1" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all tab-active">Producto</button>
-                <button onclick="switchTab('p2')" id="tab-p2" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Precio</button>
-                <button onclick="switchTab('p3')" id="tab-p3" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Plaza</button>
-                <button onclick="switchTab('p4')" id="tab-p4" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Promoción</button>
-                <button onclick="switchTab('p5')" id="tab-p5" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Personas</button>
-                <button onclick="switchTab('p6')" id="tab-p6" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Procesos</button>
-                <button onclick="switchTab('p7')" id="tab-p7" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Presencia Física</button>
-                <button onclick="switchTab('p8')" id="tab-p8" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Productividad</button>
-                <button onclick="switchTab('p9')" id="tab-p9" class="tab-btn px-6 py-4 text-sm font-medium whitespace-nowrap transition-all">Partners</button>
-            </div>
-            <div class="p-8 bg-white min-h-[220px]" id="tab-content">
-                <!-- Content injected by JS -->
-            </div>
-        </section>
-
-        <!-- Section 3: Competitive Benchmarking -->
-        <section id="benchmarking" class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <!-- Table -->
-            <div class="lg:col-span-3 glass-card rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-slate-800">Benchmarking Competitivo</h2>
-                    <a href="https://www.amazon.com/s?k=organic+quinoa" target="_blank" class="text-xs font-semibold text-indigo-600 hover:underline">Ver en Amazon &rarr;</a>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500 font-semibold uppercase text-[10px] tracking-widest">
-                            <tr>
-                                <th class="px-6 py-4">Marca / Competidor</th>
-                                <th class="px-6 py-4">Retailer</th>
-                                <th class="px-6 py-4">Precio (USD)</th>
-                                <th class="px-6 py-4">Calidad/Valor</th>
-                                <th class="px-6 py-4">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <tr class="hover:bg-indigo-50/30 transition">
-                                <td class="px-6 py-4 font-bold text-indigo-700">Andean Pure Grains</td>
-                                <td class="px-6 py-4 text-slate-500">Retail LA / Amazon</td>
-                                <td class="px-6 py-4 font-semibold">$12.99</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex gap-1 text-indigo-500">★★★★★</div>
-                                </td>
-                                <td class="px-6 py-4"><span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-1 rounded">NUESTRO</span></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Viva Naturals</td>
-                                <td class="px-6 py-4 text-slate-500">Amazon / Walmart</td>
-                                <td class="px-6 py-4">$14.50</td>
-                                <td class="px-6 py-4 text-amber-500">★★★★☆</td>
-                                <td class="px-6 py-4"><a href="https://www.falabella.com.pe/falabella-pe" target="_blank" class="text-slate-400 hover:text-indigo-600">&#x1F517;</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Ancient Harvest</td>
-                                <td class="px-6 py-4 text-slate-500">Whole Foods</td>
-                                <td class="px-6 py-4">$15.20</td>
-                                <td class="px-6 py-4 text-amber-500">★★★★☆</td>
-                                <td class="px-6 py-4"><a href="https://simple.ripley.com.pe/" target="_blank" class="text-slate-400 hover:text-indigo-600">&#x1F517;</a></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-6 py-4 font-medium">Bob's Red Mill</td>
-                                <td class="px-6 py-4 text-slate-500">Target / Amazon</td>
-                                <td class="px-6 py-4">$13.80</td>
-                                <td class="px-6 py-4 text-amber-500">★★★☆☆</td>
-                                <td class="px-6 py-4 text-slate-400">&#x1F517;</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- Bubble Chart -->
-            <div class="lg:col-span-2 glass-card rounded-2xl shadow-sm p-6 flex flex-col">
-                <div class="mb-4">
-                    <h2 class="text-lg font-bold text-slate-800">Posicionamiento</h2>
-                    <p class="text-[10px] text-slate-400">Eje X: Precio | Eje Y: Valor Percibido | Tamaño: Share</p>
-                </div>
-                <div class="chart-container flex-grow">
-                    <canvas id="bubbleChart"></canvas>
+        <!-- SECCIÓN 1: Mapa del Cliente (Customer Journey) -->
+        <section id="journey" class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">1. Mapa del Cliente (Customer Journey)</h2>
+            <div class="saas-card p-6">
+                <div class="flex flex-col lg:flex-row gap-6 lg:gap-4 justify-between relative">
+                    <!-- Conciencia -->
+                    <div class="flex-1 relative z-10 bg-white p-4 rounded-lg border border-slate-100 shadow-sm hover:border-corporate-500 transition-colors">
+                        <div class="text-corporate-600 mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">1. Conciencia</h3>
+                        <p class="text-xs text-slate-500 mt-2"><strong>Fricción:</strong> Sobrecarga de info sobre superalimentos en r/EatCheapAndHealthy.</p>
+                        <p class="text-xs text-corporate-600 mt-1 font-medium">Táctica: SEO en "Plant-based proteins".</p>
+                    </div>
+                    <!-- Consideración -->
+                    <div class="flex-1 relative z-10 bg-white p-4 rounded-lg border border-slate-100 shadow-sm hover:border-corporate-500 transition-colors">
+                        <div class="text-corporate-600 mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">2. Consideración</h3>
+                        <p class="text-xs text-slate-500 mt-2"><strong>Fricción:</strong> Confusión sobre residuos de Saponina y calidad orgánica dudosa.</p>
+                        <p class="text-xs text-corporate-600 mt-1 font-medium">Táctica: Etiquetado "Triple-Washed" / USDA.</p>
+                    </div>
+                    <!-- Conversión -->
+                    <div class="flex-1 relative z-10 bg-white p-4 rounded-lg border border-slate-100 shadow-sm hover:border-corporate-500 transition-colors">
+                        <div class="text-corporate-600 mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">3. Conversión</h3>
+                        <p class="text-xs text-slate-500 mt-2"><strong>Fricción:</strong> Abandono por altos costos de envío o formato de empaque incómodo.</p>
+                        <p class="text-xs text-corporate-600 mt-1 font-medium">Táctica: Doypack resellable, Amazon FBA.</p>
+                    </div>
+                    <!-- Retención -->
+                    <div class="flex-1 relative z-10 bg-white p-4 rounded-lg border border-slate-100 shadow-sm hover:border-corporate-500 transition-colors">
+                        <div class="text-corporate-600 mb-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">4. Retención</h3>
+                        <p class="text-xs text-slate-500 mt-2"><strong>Fricción:</strong> Alta tasa de churn por considerarlo un "commodity" sin vínculo de marca.</p>
+                        <p class="text-xs text-corporate-600 mt-1 font-medium">Táctica: Programa Suscripción (LTV) y Recetas.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: Growth & ROI Simulator -->
-        <section id="growth" class="space-y-6">
+        <!-- SECCIÓN 2: Panel de KPIs -->
+        <section id="kpis" class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">2. Panel de KPIs de Negocio</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Alcance -->
+                <div class="saas-card p-5 border-l-4 border-l-blue-500">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Alcance Total (Top Funnel)</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-bold text-slate-800">125,000</span>
+                        <span class="text-xs font-medium text-success-600 bg-success-50 px-2 py-0.5 rounded flex items-center">
+                            ↑ 15%
+                        </span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Impresiones mensuales en Retail Ads</p>
+                </div>
+                <!-- Conversión -->
+                <div class="saas-card p-5 border-l-4 border-l-corporate-500">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Tasa de Conversión</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-bold text-slate-800">3.8%</span>
+                        <span class="text-xs font-medium text-success-600 bg-success-50 px-2 py-0.5 rounded flex items-center">
+                            ↑ 0.5%
+                        </span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Sobre tráfico orgánico y pagado</p>
+                </div>
+                <!-- CAC -->
+                <div class="saas-card p-5 border-l-4 border-l-amber-500">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">CAC Proyectado</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-bold text-slate-800">$14.20</span>
+                        <span class="text-xs font-medium text-success-600 bg-success-50 px-2 py-0.5 rounded flex items-center">
+                            ↓ -$1.30
+                        </span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Costo Adquisición de Cliente</p>
+                </div>
+                <!-- LTV -->
+                <div class="saas-card p-5 border-l-4 border-l-success-500">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Lifetime Value (LTV)</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-bold text-slate-800">$450.00</span>
+                        <span class="text-xs font-medium text-success-600 bg-success-50 px-2 py-0.5 rounded flex items-center">
+                            Alta retención
+                        </span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Proyectado a 12 meses de suscripción</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: Estrategia 9Ps -->
+        <section id="estrategia" class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">3. Estrategia 9Ps (Mix de Marketing Integral)</h2>
+            <div class="saas-card overflow-hidden">
+                <!-- Tabs Navigation -->
+                <div class="flex overflow-x-auto no-scrollbar border-b border-slate-200 bg-slate-50/50" id="tabs-nav">
+                    <!-- JS generará los botones -->
+                </div>
+                <!-- Tab Content -->
+                <div class="p-8 min-h-[180px] flex items-center" id="tab-content">
+                    <!-- JS generará el contenido -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: Análisis Competitivo & Mercado -->
+        <section id="mercado" class="space-y-4">
+            <h2 class="text-xl font-bold text-slate-800">4. Análisis Competitivo y de Mercado</h2>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <!-- Tabla -->
+                <div class="saas-card overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase">Benchmarking B2C</h3>
+                        <span class="text-[10px] text-slate-500 font-mono">Los Ángeles Retail</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="text-slate-500 text-xs uppercase bg-white border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Marca</th>
+                                    <th class="px-6 py-3 font-semibold">Precio (16oz)</th>
+                                    <th class="px-6 py-3 font-semibold">Atributos</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Ver Retailer</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                <!-- Propia -->
+                                <tr class="bg-corporate-50/50 hover:bg-corporate-50 transition">
+                                    <td class="px-6 py-4 font-bold text-corporate-700 flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-corporate-600 animate-pulse"></div>
+                                        Andean Pure Grains
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-slate-800">$12.99</td>
+                                    <td class="px-6 py-4 text-xs text-slate-600">Orgánica, Triple-Washed, Doypack</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="text-xs font-bold text-corporate-600 bg-corporate-100 px-2 py-1 rounded">Nuestro Modelo</span>
+                                    </td>
+                                </tr>
+                                <!-- Competencia -->
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="px-6 py-4 font-medium text-slate-700">Viva Naturals</td>
+                                    <td class="px-6 py-4 text-slate-600">$14.50</td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">Básica, Bolsa regular</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="https://www.amazon.com/dp/B00TS7A1QG" target="_blank" class="text-corporate-500 hover:text-corporate-700 text-xs font-medium underline">Ver Amazon ↗</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="px-6 py-4 font-medium text-slate-700">Ancient Harvest</td>
+                                    <td class="px-6 py-4 text-slate-600">$15.20</td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">Orgánica, Caja cartón</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="https://www.falabella.com.pe/falabella-pe/search?Ntt=quinua+organica" target="_blank" class="text-corporate-500 hover:text-corporate-700 text-xs font-medium underline">Ver Falabella ↗</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="px-6 py-4 font-medium text-slate-700">Bob's Red Mill</td>
+                                    <td class="px-6 py-4 text-slate-600">$13.80</td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">Tradicional, No certificada</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="https://simple.ripley.com.pe/search/quinua" target="_blank" class="text-corporate-500 hover:text-corporate-700 text-xs font-medium underline">Ver Ripley ↗</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Gráfico de Burbujas -->
+                <div class="saas-card p-6 flex flex-col">
+                    <div class="mb-4">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase">Matriz de Posicionamiento</h3>
+                        <p class="text-[10px] text-slate-500">X: Precio ($) | Y: Calidad Percibida (1-10) | Tamaño: Cuota Proyectada</p>
+                    </div>
+                    <div class="relative w-full flex-grow" style="height: 300px;">
+                        <canvas id="bubbleChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: Simulador de Growth & ROI -->
+        <section id="simulador" class="space-y-4">
             <div class="flex items-center gap-3">
-                <div class="h-8 w-1 bg-indigo-600 rounded-full"></div>
-                <h2 class="text-2xl font-bold text-slate-900">Simulador de Growth & ROI</h2>
+                <svg class="w-6 h-6 text-corporate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                <h2 class="text-xl font-bold text-slate-800">5. Simulador de Growth & ROI (Business Intelligence)</h2>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Inputs -->
-                <div class="lg:col-span-1 glass-card p-8 rounded-2xl shadow-sm space-y-6">
-                    <div class="space-y-4">
+            <div class="saas-card p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+                
+                <!-- Inputs (Controles) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <h3 class="text-sm font-bold text-slate-800 uppercase border-b border-slate-100 pb-2">Variables de Entrada</h3>
+                    
+                    <div class="space-y-2">
                         <div class="flex justify-between">
-                            <label class="text-xs font-bold text-slate-500 uppercase">Inversión Ads ($)</label>
-                            <span id="val-inv" class="text-sm font-bold text-indigo-600">$5,000</span>
+                            <label class="text-xs font-semibold text-slate-600">Inversión MKT ($)</label>
+                            <span id="val-inv" class="text-sm font-bold text-corporate-600">$5,000</span>
                         </div>
-                        <input type="range" id="inv-marketing" min="1000" max="50000" step="500" value="5000" oninput="updateSimulator()">
+                        <input type="range" id="inp-inv" class="w-full" min="1000" max="20000" step="500" value="5000" oninput="calculateROI()">
                     </div>
-                    <div class="space-y-4">
+
+                    <div class="space-y-2">
                         <div class="flex justify-between">
-                            <label class="text-xs font-bold text-slate-500 uppercase">Clicks / Visitas</label>
-                            <span id="val-clicks" class="text-sm font-bold text-indigo-600">10,000</span>
+                            <label class="text-xs font-semibold text-slate-600">Tráfico (Clics/Visitas)</label>
+                            <span id="val-clics" class="text-sm font-bold text-corporate-600">15,000</span>
                         </div>
-                        <input type="range" id="clicks" min="1000" max="100000" step="1000" value="10000" oninput="updateSimulator()">
+                        <input type="range" id="inp-clics" class="w-full" min="5000" max="100000" step="1000" value="15000" oninput="calculateROI()">
                     </div>
-                    <div class="space-y-4">
+
+                    <div class="space-y-2">
                         <div class="flex justify-between">
-                            <label class="text-xs font-bold text-slate-500 uppercase">Tasa Conv. (%)</label>
-                            <span id="val-conv" class="text-sm font-bold text-indigo-600">3%</span>
+                            <label class="text-xs font-semibold text-slate-600">Tasa Conversión (%)</label>
+                            <span id="val-conv" class="text-sm font-bold text-corporate-600">3.5%</span>
                         </div>
-                        <input type="range" id="conv-rate" min="0.1" max="10" step="0.1" value="3" oninput="updateSimulator()">
+                        <input type="range" id="inp-conv" class="w-full" min="0.5" max="10" step="0.1" value="3.5" oninput="calculateROI()">
                     </div>
-                    <div class="space-y-4">
+
+                    <div class="space-y-2">
                         <div class="flex justify-between">
-                            <label class="text-xs font-bold text-slate-500 uppercase">Ticket Prom. ($)</label>
-                            <span id="val-aov" class="text-sm font-bold text-indigo-600">$45</span>
+                            <label class="text-xs font-semibold text-slate-600">Recurrencia (Meses)</label>
+                            <span id="val-rec" class="text-sm font-bold text-corporate-600">6</span>
                         </div>
-                        <input type="range" id="aov" min="10" max="200" step="5" value="45" oninput="updateSimulator()">
+                        <input type="range" id="inp-rec" class="w-full" min="1" max="24" step="1" value="6" oninput="calculateROI()">
                     </div>
                 </div>
 
-                <!-- Outputs & Charts -->
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">CAC Real</p>
-                            <p id="out-cac" class="text-2xl font-bold text-indigo-600 mt-1">$16.6</p>
+                <!-- Outputs (Lógica BI & Chart) -->
+                <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+                    <!-- Tarjetas de Resultado -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                            <p class="text-[10px] uppercase font-bold text-slate-500">Nuevos Clientes</p>
+                            <p id="out-clients" class="text-xl font-bold text-slate-800 mt-1">525</p>
                         </div>
-                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Ventas Proyectadas</p>
-                            <p id="out-sales" class="text-2xl font-bold text-emerald-600 mt-1">$13,500</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-center">
+                            <p class="text-[10px] uppercase font-bold text-slate-500">CAC Real</p>
+                            <p id="out-cac" class="text-xl font-bold text-amber-600 mt-1">$9.52</p>
                         </div>
-                        <div class="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">ROI (%)</p>
-                            <p id="out-roi" class="text-2xl font-bold text-slate-800 mt-1">170%</p>
+                        <div class="bg-success-50 p-4 rounded-lg border border-success-200 text-center col-span-2 sm:col-span-1">
+                            <p class="text-[10px] uppercase font-bold text-success-700">LTV Generado</p>
+                            <p id="out-ltv" class="text-xl font-bold text-success-600 mt-1">$77.94</p>
                         </div>
                     </div>
-                    <div class="glass-card p-6 rounded-2xl shadow-sm h-[280px]">
-                        <canvas id="growthChart"></canvas>
+
+                    <!-- Gráfico -->
+                    <div class="relative w-full flex-grow min-h-[200px]">
+                        <canvas id="roiChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -257,141 +325,205 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-10 mt-12">
+    <!-- SECCIÓN 6: Créditos (Footer) -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 mt-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="text-center md:text-left">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Integrantes Proyecto BI - ADEX 2026</p>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 mt-4 text-sm font-medium text-slate-600">
-                        <span>GIANELLA ARMAS CANA</span>
-                        <span>MARILIN MEDINA APOLINARIO</span>
-                        <span>ROSAMIA CÉSPEDES DURAND</span>
-                        <span>ERIC MOZOMBITE SHISHCO</span>
-                        <span>PAOLA MAMANI SÁNCHEZ</span>
-                        <span>TAMIA OBREGÓN ESPINOZA</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 grayscale opacity-50">
-                    <div class="h-8 w-8 bg-slate-300 rounded"></div>
-                    <div class="h-8 w-20 bg-slate-300 rounded"></div>
-                </div>
+            <div class="text-center md:text-left mb-6">
+                <h4 class="text-white text-sm font-bold uppercase tracking-widest mb-2">Equipo Desarrollador & Estrategas BI</h4>
+                <p class="text-xs text-slate-500">ADEX Escuela | Experiencias Formativas en Situaciones Reales de Trabajo 2026</p>
             </div>
-            <div class="text-center mt-8 pt-8 border-t border-slate-100">
-                <p class="text-[10px] text-slate-300 uppercase tracking-[4px]">Andean Pure Grains &copy; 2026</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center md:text-left text-sm font-medium">
+                <div class="hover:text-white transition cursor-default">Gianella Armas Cana</div>
+                <div class="hover:text-white transition cursor-default">Rosamía Céspedes Durand</div>
+                <div class="hover:text-white transition cursor-default">Paola Mamani Sanchez</div>
+                <div class="hover:text-white transition cursor-default">Marilin Medina Apolinario</div>
+                <div class="hover:text-white transition cursor-default">Eric Mozombite Shishco</div>
+                <div class="hover:text-white transition cursor-default">Tamia Obregón Espinoza</div>
+            </div>
+            
+            <div class="mt-10 pt-6 border-t border-slate-800 text-center text-xs flex justify-between items-center flex-col md:flex-row gap-4">
+                <span>&copy; 2026 Andean Pure Grains Dashboard. Todos los derechos reservados.</span>
+                <span class="bg-slate-800 px-3 py-1 rounded-full text-[10px] tracking-wider text-slate-300">CONFIDENCIAL</span>
             </div>
         </div>
     </footer>
 
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
-        // Data Store 9Ps
-        const data9Ps = {
-            p1: { title: "Producto", content: "Quinua Orgánica de los Andes Peruanos en grano (Variedades Blanca y Tricolor). Partida Arancelaria 1008.50.90.00. Valor agregado: Proceso de eliminación de saponina garantizado, certificaciones USDA Organic y Non-GMO." },
-            p2: { title: "Precio", content: "Estrategia basada en valor (Premium Positioning). Retail Price: $12.99 - $13.50 por unidad de 1lb (aprox. 16oz). Margen proyectado superior al 45% mediante eliminación de intermediarios en canal D2C." },
-            p3: { title: "Plaza", content: "Omnicanalidad: Foco inicial en Los Ángeles, CA (Whole Foods, Trader Joe's) y canal digital vía Amazon FBA para cobertura nacional eficiente desde la Costa Oeste." },
-            p4: { title: "Promoción", content: "Marketing Digital enfocado en 'Wellness' y 'Plant-Based Proteins'. Campañas en Instagram/TikTok dirigidas a demografías conscientes de la salud (25-45 años). Email marketing recurrente." },
-            p5: { title: "Personas", content: "Capacitación de 15 productores en comunidades altoandinas bajo comercio justo. Equipo de CX bilingüe enfocado en el mercado anglosajón para soporte preventa y posventa." },
-            p6: { title: "Procesos", content: "Cadena de suministro con Blockchain para trazabilidad total. Procesos estandarizados de lavado (Triple Wash) y secado centrífugo para asegurar 0% amargor en el consumidor final." },
-            p7: { title: "Presencia Física", content: "Empaque Doypack resellable (Eco-friendly) con diseño minimalista 'Stripe-style'. Etiquetas informativas con recetas rápidas (QR) y storytelling de la comunidad de origen." },
-            p8: { title: "Productividad", content: "Rendimiento optimizado de 2.5 TN/Ha mediante biofertilizantes orgánicos. Tasa de conversión web objetivo del 3.5% para maximizar el tráfico del embudo." },
-            p9: { title: "Partners", content: "Alianza estratégica con Importadores Directos en Long Beach y operadores logísticos de última milla para reducción de tiempos de entrega en California." }
-        };
+        // --- 1. Lógica de Pestañas (9Ps) ---
+        const mix9Ps = [
+            { id: 'p1', title: 'Producto', icon: '📦', text: 'Quinua Orgánica de los Andes Peruanos (1008.50.90.00). Diferenciador: "Triple-Washed" para eliminar 100% de Saponina y empaque Doypack resellable.' },
+            { id: 'p2', title: 'Precio', icon: '💰', text: 'Estrategia Premium: $12.99. Competitivo frente a Whole Foods ($15.20) pero posicionando alta calidad frente a marcas blancas ($13.80).' },
+            { id: 'p3', title: 'Plaza', icon: '🗺️', text: 'Penetración inicial en Los Ángeles, CA (Estado 5ta economía global). Enfoque en Retailers orgánicos y Amazon FBA para D2C.' },
+            { id: 'p4', title: 'Promoción', icon: '📢', text: 'Marketing digital B2C orientado a "Plant-based proteins" y recetas. SEO en foros de wellness para contrarrestar confusión de preparación.' },
+            { id: 'p5', title: 'Personas', icon: '👥', text: 'Trazabilidad y empoderamiento de comunidades altoandinas. Soporte al cliente en EE.UU. altamente capacitado para resolver dudas de producto.' },
+            { id: 'p6', title: 'Procesos', icon: '⚙️', text: 'Blockchain en la cadena de suministro para garantizar la certificación USDA Organic y agilizar la trazabilidad aduanera.' },
+            { id: 'p7', title: 'Presencia Física', icon: '🏪', text: 'Diseño de empaque moderno y minimalista, alejándose del cliché folclórico para apelar al consumidor sofisticado de California.' },
+            { id: 'p8', title: 'Productividad', icon: '📈', text: 'Optimización de KPI financiero (LTV:CAC). Foco en reducir el abandono (churn) mediante educación continua post-compra.' },
+            { id: 'p9', title: 'Partners', icon: '🤝', text: 'Alianzas logísticas en puerto de Long Beach y certificadoras internacionales para asegurar acceso ágil a góndolas estadounidenses.' }
+        ];
 
-        function switchTab(p) {
-            // Update buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
-            document.getElementById('tab-' + p).classList.add('tab-active');
+        const navContainer = document.getElementById('tabs-nav');
+        const contentContainer = document.getElementById('tab-content');
+
+        function renderTabs() {
+            mix9Ps.forEach((p, index) => {
+                const btn = document.createElement('button');
+                btn.className = `px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors focus:outline-none ${index === 0 ? 'tab-active' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'}`;
+                btn.innerHTML = `${p.icon} ${p.title}`;
+                btn.onclick = () => activateTab(index, btn);
+                navContainer.appendChild(btn);
+            });
+            activateTab(0, navContainer.firstChild);
+        }
+
+        function activateTab(index, btnElement) {
+            // Reset styles
+            Array.from(navContainer.children).forEach(child => {
+                child.className = 'px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors focus:outline-none text-slate-500 hover:text-slate-800 hover:bg-slate-100';
+            });
+            // Set active
+            btnElement.className = 'px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors focus:outline-none tab-active';
             
-            // Update content
-            const content = data9Ps[p];
-            document.getElementById('tab-content').innerHTML = `
-                <div class="animate-in fade-in slide-in-from-left-4 duration-300">
-                    <h3 class="text-xl font-bold text-indigo-600 mb-3">${content.title}</h3>
-                    <p class="text-slate-600 leading-relaxed max-w-3xl">${content.content}</p>
+            // Render Content with animation
+            contentContainer.innerHTML = `
+                <div class="animate-[fadeIn_0.3s_ease-in-out] w-full">
+                    <h3 class="text-xl font-bold text-corporate-700 mb-2">${mix9Ps[index].icon} ${mix9Ps[index].title}</h3>
+                    <p class="text-slate-600 leading-relaxed">${mix9Ps[index].text}</p>
                 </div>
             `;
         }
 
-        // Charts
-        let bubbleChart, growthChart;
+        // Add simple fade animation to Tailwind
+        tailwind.config.theme.extend.keyframes = {
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(5px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } }
+        };
 
-        function initCharts() {
-            const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
-            bubbleChart = new Chart(ctxBubble, {
+        // --- 2. Chart.js: Bubble Chart (Mercado) ---
+        function initBubbleChart() {
+            const ctx = document.getElementById('bubbleChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'bubble',
                 data: {
                     datasets: [
-                        { label: 'Andean Pure Grains', data: [{ x: 13, y: 9.5, r: 25 }], backgroundColor: '#4f46e5' },
-                        { label: 'Viva Naturals', data: [{ x: 14.5, y: 8, r: 20 }], backgroundColor: '#94a3b8' },
-                        { label: 'Ancient Harvest', data: [{ x: 15.2, y: 8.5, r: 15 }], backgroundColor: '#cbd5e1' },
-                        { label: 'Bob\'s Red Mill', data: [{ x: 13.8, y: 7, r: 18 }], backgroundColor: '#e2e8f0' }
+                        {
+                            label: 'Andean Pure Grains (Nuestro)',
+                            data: [{ x: 12.99, y: 9.0, r: 18 }], // R = target market share
+                            backgroundColor: 'rgba(37, 99, 235, 0.8)', // Corporate Blue
+                            borderColor: '#1d4ed8',
+                            borderWidth: 2,
+                            hoverRadius: 5
+                        },
+                        {
+                            label: 'Viva Naturals',
+                            data: [{ x: 14.50, y: 6.5, r: 25 }],
+                            backgroundColor: 'rgba(148, 163, 184, 0.5)' // Slate
+                        },
+                        {
+                            label: 'Ancient Harvest',
+                            data: [{ x: 15.20, y: 8.0, r: 20 }],
+                            backgroundColor: 'rgba(148, 163, 184, 0.5)'
+                        },
+                        {
+                            label: 'Bob\'s Red Mill',
+                            data: [{ x: 13.80, y: 5.5, r: 35 }],
+                            backgroundColor: 'rgba(148, 163, 184, 0.5)'
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: { title: { display: true, text: 'Calidad / Valor' }, min: 5, max: 10 },
-                        x: { title: { display: true, text: 'Precio (USD)' }, min: 10, max: 18 }
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, usePointStyle: true } }
                     },
-                    plugins: { legend: { display: false } }
+                    scales: {
+                        x: { title: { display: true, text: 'Precio Retail (USD)', font: { weight: 'bold' } }, min: 12, max: 16 },
+                        y: { title: { display: true, text: 'Calidad / Atributos (1-10)', font: { weight: 'bold' } }, min: 4, max: 10 }
+                    }
                 }
             });
+        }
 
-            const ctxGrowth = document.getElementById('growthChart').getContext('2d');
-            growthChart = new Chart(ctxGrowth, {
+        // --- 3. Simulador de Growth & ROI (BI Logic) ---
+        const TICKET_PROMEDIO = 12.99; // Precio base asumido para venta D2C
+        let roiChartInstance = null;
+
+        function initROIChart() {
+            const ctx = document.getElementById('roiChart').getContext('2d');
+            roiChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Inversión', 'Ventas (Neto)'],
+                    labels: ['Inversión MKT', 'Retorno (LTV Total)'],
                     datasets: [{
-                        label: 'Proyección Monetaria ($)',
-                        data: [5000, 13500],
-                        backgroundColor: ['#e2e8f0', '#10b981'],
-                        borderRadius: 8
+                        label: 'Proyección (USD)',
+                        data: [0, 0],
+                        backgroundColor: ['#94a3b8', '#10b981'], // Slate para Inversión, Verde para Éxito
+                        borderRadius: 6,
+                        barPercentage: 0.6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: (val) => '$' + val.toLocaleString() } },
+                        x: { grid: { display: false } }
+                    }
                 }
             });
         }
 
-        function updateSimulator() {
-            const inv = parseFloat(document.getElementById('inv-marketing').value);
-            const clicks = parseFloat(document.getElementById('clicks').value);
-            const rate = parseFloat(document.getElementById('conv-rate').value) / 100;
-            const aov = parseFloat(document.getElementById('aov').value);
+        function calculateROI() {
+            // Get values
+            const inversion = parseFloat(document.getElementById('inp-inv').value);
+            const clics = parseFloat(document.getElementById('inp-clics').value);
+            const convRate = parseFloat(document.getElementById('inp-conv').value);
+            const recurrencia = parseFloat(document.getElementById('inp-rec').value);
 
-            // Calc
-            const conversions = clicks * rate;
-            const cac = conversions > 0 ? (inv / conversions) : 0;
-            const sales = conversions * aov;
-            const roi = inv > 0 ? ((sales - inv) / inv) * 100 : 0;
+            // Update UI Labels
+            document.getElementById('val-inv').innerText = '$' + inversion.toLocaleString();
+            document.getElementById('val-clics').innerText = clics.toLocaleString();
+            document.getElementById('val-conv').innerText = convRate.toFixed(1) + '%';
+            document.getElementById('val-rec').innerText = recurrencia;
 
-            // UI
-            document.getElementById('val-inv').innerText = `$${inv.toLocaleString()}`;
-            document.getElementById('val-clicks').innerText = clicks.toLocaleString();
-            document.getElementById('val-conv').innerText = (rate * 100).toFixed(1) + '%';
-            document.getElementById('val-aov').innerText = `$${aov}`;
+            // Business Logic
+            const conversiones = clics * (convRate / 100);
+            const cac = conversiones > 0 ? inversion / conversiones : 0;
+            const ltvPorCliente = TICKET_PROMEDIO * recurrencia;
+            const retornoTotal = conversiones * ltvPorCliente;
 
-            document.getElementById('out-cac').innerText = `$${cac.toFixed(2)}`;
-            document.getElementById('out-sales').innerText = `$${sales.toLocaleString()}`;
-            document.getElementById('out-roi').innerText = roi.toFixed(0) + '%';
+            // Update Outputs
+            document.getElementById('out-clients').innerText = Math.round(conversiones).toLocaleString();
+            document.getElementById('out-cac').innerText = '$' + cac.toFixed(2);
+            document.getElementById('out-ltv').innerText = '$' + ltvPorCliente.toFixed(2);
 
-            // Chart
-            growthChart.data.datasets[0].data = [inv, sales];
-            growthChart.update();
+            // Conditional Coloring for CAC
+            const cacEl = document.getElementById('out-cac');
+            if(cac > ltvPorCliente) {
+                cacEl.className = 'text-xl font-bold text-red-600 mt-1'; // Pérdida
+            } else if (cac > (TICKET_PROMEDIO * 0.5)) {
+                cacEl.className = 'text-xl font-bold text-amber-600 mt-1'; // Alerta
+            } else {
+                cacEl.className = 'text-xl font-bold text-success-600 mt-1'; // Excelente
+            }
+
+            // Update Chart
+            if(roiChartInstance) {
+                roiChartInstance.data.datasets[0].data = [inversion, retornoTotal];
+                roiChartInstance.update();
+            }
         }
 
         // Boot
-        window.onload = () => {
-            switchTab('p1');
-            initCharts();
-            updateSimulator();
-        };
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            initBubbleChart();
+            initROIChart();
+            calculateROI(); // Inicializa simulador
+        });
     </script>
 </body>
 </html>
