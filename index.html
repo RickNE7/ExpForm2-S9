@@ -56,7 +56,39 @@
         .animate-spin-slow { animation: spin 2s linear infinite; }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+<!-- Bloqueamos el scroll temporalmente (overflow-hidden) hasta que se quite el Splash Screen -->
+<body id="main-body" class="text-slate-800 antialiased min-h-screen flex flex-col overflow-hidden">
+
+    <!-- ========================================== -->
+    <!-- SPLASH SCREEN (PANTALLA DE BIENVENIDA)     -->
+    <!-- ========================================== -->
+    <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-1000 ease-in-out" onclick="hideSplashScreen()">
+        <!-- Fondo de Imagen con opacidad para resaltar el texto -->
+        <div class="absolute inset-0 bg-cover bg-center opacity-60" style="background-image: url('https://raw.githubusercontent.com/RickNE7/ExpForm2-S9/main/1P_Producto.PNG');"></div>
+        <!-- Capa de oscurecimiento suave (Gradient) -->
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
+        
+        <!-- Contenido Central del Splash Screen -->
+        <div class="relative z-10 text-center flex flex-col items-center px-4">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-4 drop-shadow-2xl">
+                Andean <span class="text-brand-500">Pure Grains</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-200 font-medium mb-12 drop-shadow-lg max-w-2xl">
+                SaaS Business Intelligence & Growth Marketing
+            </p>
+            
+            <!-- Botón Animado para hacer clic -->
+            <div class="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 rounded-full text-white font-bold animate-bounce flex items-center gap-3 shadow-[0_0_30px_rgba(22,163,74,0.3)] hover:bg-white/20 transition-all">
+                <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                Haga clic para iniciar el Dashboard
+            </div>
+            
+            <p class="mt-8 text-xs text-slate-400 uppercase tracking-widest font-semibold drop-shadow-md">
+                Plan Estratégico de Exportación a Los Ángeles, USA
+            </p>
+        </div>
+    </div>
+    <!-- ========================================== -->
 
     <!-- Navegación Superior -->
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
@@ -69,7 +101,7 @@
                     <span class="text-xl font-extrabold tracking-tight text-slate-900">Andean <span class="text-brand-600">Pure Grains</span></span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.3</span>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full border border-slate-200">SaaS BI Dashboard v5.4</span>
                 </div>
             </div>
         </div>
@@ -96,7 +128,6 @@
                     <h3 class="text-sm font-semibold text-slate-500">CAC Proyectado</h3>
                     <p class="text-3xl font-extrabold text-slate-900 mt-1">$15.20</p>
                     
-                    <!-- Capa de Fórmula al pasar el mouse -->
                     <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-sm flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                         <span class="text-xs font-bold text-brand-400 mb-2 tracking-widest uppercase">Fórmula CAC</span>
                         <div class="bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm font-mono text-slate-300 shadow-inner">
@@ -387,6 +418,21 @@
 
     <!-- SCRIPTS DE LÓGICA -->
     <script>
+        // --- FUNCIÓN PARA EL SPLASH SCREEN ---
+        function hideSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            const body = document.getElementById('main-body');
+            
+            // Inicia la animación de desvanecimiento
+            splash.style.opacity = '0';
+            
+            // Después de 1 segundo (duración de la transición), lo oculta del DOM y reactiva el scroll
+            setTimeout(() => {
+                splash.style.display = 'none';
+                body.classList.remove('overflow-hidden');
+            }, 1000);
+        }
+
         // --- 0. DATA CENTRALIZADA ---
         const competitorData = [
             { id: 'apg', name: 'Andean Pure Grains (16oz)', price: 6.50, package: 'Premium Doypack', url: '#', quality: 9.0, share: 16, isOurBrand: true },
@@ -591,7 +637,7 @@
             updateBubbleChart();
         }
 
-        // --- 5. LÓGICA SIMULADOR (Actualizada para Escala 0) ---
+        // --- 5. LÓGICA SIMULADOR ---
         function runSimulator() {
             const inv = parseFloat(document.getElementById('sim-inv').value);
             const clicks = parseFloat(document.getElementById('sim-clicks').value);
@@ -606,11 +652,10 @@
 
             const conversions = Math.round(clicks * convRate); 
             let cac = 0;
-            // Evitar División por cero o estados "Infinity"
             if (conversions > 0 && inv > 0) {
                 cac = inv / conversions;
             } else if (inv > 0 && conversions === 0) {
-                cac = inv; // Todo el gasto sin clientes
+                cac = inv; 
             } else {
                 cac = 0;
             }
@@ -622,7 +667,7 @@
             if (cac > 0) {
                 ratio = ltv / cac;
             } else if (conversions > 0 && inv === 0) {
-                ratio = 9.9; // Representa rentabilidad infinita/máxima (gratis)
+                ratio = 9.9; 
             }
 
             document.getElementById('sim-buyers-val').innerText = conversions.toLocaleString();
